@@ -66,8 +66,15 @@
     }
   }
 
-  const shortDate = (value) => {
-    if (!value) return 'YOUTUBE';
+  // Thumbnail for a manually added video link (used when live sync is off).
+  const ytThumb = (url) => {
+    const raw = String(url || '').trim();
+    const match = raw.match(/(?:v=|youtu\.be\/|shorts\/|embed\/|live\/)([\w-]{11})/);
+    const id = match ? match[1] : (/^[\w-]{11}$/.test(raw) ? raw : '');
+    return id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : '';
+  };
+
+  const shortDate = (value) => {    if (!value) return 'YOUTUBE';
     const d = new Date(value.replace(' ', 'T') + 'Z');
     if (Number.isNaN(d.getTime())) return 'YOUTUBE';
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
@@ -251,7 +258,12 @@
   async function tutorials() {
     const d = await App.loadContent('tutorials');
     const live = await youtubeVideos();
-    const videos = live || d.videos || [];
+    const fallback = (d.videos || []).map((v) => ({
+      ...v,
+      link: v.link || social().youtube,
+      thumb: v.thumb || ytThumb(v.link)
+    }));
+    const videos = live || fallback;
 
     App.mount(App.shell(
       d.kicker,
@@ -264,9 +276,9 @@
         </div>
         <div class="grid g3">
           ${videos.map((v) => `
-            <a class="card video-card reveal" href="${App.h(live ? v.link : social().youtube)}" target="_blank" rel="noopener">
+            <a class="card video-card reveal" href="${App.h(v.link || social().youtube)}" target="_blank" rel="noopener">
               <div class="thumb">
-                ${live && v.thumb ? `<img src="${App.h(v.thumb)}" alt="" loading="lazy">` : ''}
+                ${v.thumb ? `<img src="${App.h(v.thumb)}" alt="" loading="lazy">` : ''}
                 <span class="play"><i class="fa-solid fa-play"></i></span>
               </div>
               <div class="body">

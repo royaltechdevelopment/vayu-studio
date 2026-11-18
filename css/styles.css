@@ -859,3 +859,4 @@ body[data-page="admin"] .page { max-width: 1400px; }
   .cms-grid { grid-template-columns: 1fr; }
   .cms-fab { left: 16px; right: 16px; bottom: 16px; justify-content: space-between; }
 }
+.cms-thumb.yt { width: 96px; height: 54px; border-radius: 7px; }

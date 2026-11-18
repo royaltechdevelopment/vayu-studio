@@ -111,6 +111,7 @@
           hint: 'Only shown if the live YouTube sync fails. Normal uploads appear automatically — no need to add them here.',
           itemLabel: (i) => i.title || 'Video', fields: [
             { k: 'title', label: 'Title' },
+            { k: 'link', label: 'YouTube link', type: 'youtube', hint: 'Paste the video URL — thumbnail is detected automatically.' },
             { k: 'level', label: 'Level', type: 'select', options: LEVELS },
             { k: 'duration', label: 'Duration', hint: 'e.g. 12:40' },
             { k: 'desc', label: 'Description', type: 'area' }
@@ -368,6 +369,31 @@
     </div>`;
   }
 
+  function youtubeId(url) {
+    const raw = String(url || '').trim();
+    const match = raw.match(/(?:v=|youtu\.be\/|shorts\/|embed\/|live\/)([\w-]{11})/);
+    if (match) return match[1];
+    return /^[\w-]{11}$/.test(raw) ? raw : '';
+  }
+
+  function youtubeThumb(url) {
+    const id = youtubeId(url);
+    return id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : '';
+  }
+
+  function youtubeField(f, path, value) {
+    const id = fieldId(path);
+    const src = youtubeThumb(value);
+    return `<div class="cms-field">
+      <label for="${id}">${App.h(f.label)}</label>
+      <div class="cms-image-row">
+        <img class="cms-thumb yt" data-thumb="${App.h(path)}" src="${App.h(src)}" alt="" ${src ? '' : 'hidden'} onerror="this.hidden=true">
+        <input type="text" id="${id}" data-path="${App.h(path)}" data-youtube="1" value="${App.h(value ?? '')}" placeholder="https://youtu.be/…">
+      </div>
+      <span class="cms-hint">${App.h(f.hint || 'Paste a YouTube link — the thumbnail is picked up automatically.')}</span>
+    </div>`;
+  }
+
   function boolField(f, path, value) {
     return `<div class="cms-field">
       <label class="cms-check" for="${fieldId(path)}">
@@ -454,6 +480,7 @@
       case 'area':
       case 'code': return textField(f, path, value);
       case 'image': return imageField(f, path, value);
+      case 'youtube': return youtubeField(f, path, value);
       case 'bool': return boolField(f, path, value);
       case 'select': return selectField(f, path, value);
       case 'group': return groupField(f, path, value);
@@ -491,10 +518,11 @@
     const path = el.dataset.path;
     const value = el.type === 'checkbox' ? el.checked : el.value;
     setPath(cms.draft, path, value);
-    if (el.dataset.image === '1') {
+    if (el.dataset.image === '1' || el.dataset.youtube === '1') {
       const img = document.querySelector(`[data-thumb="${path}"]`);
+      const src = el.dataset.youtube === '1' ? youtubeThumb(value) : value;
       if (img) {
-        if (value) { img.src = value; img.hidden = false; } else { img.hidden = true; }
+        if (src) { img.src = src; img.hidden = false; } else { img.hidden = true; }
       }
     }
     markDirty();
