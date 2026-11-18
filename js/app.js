@@ -18,7 +18,7 @@
 
   // Clean URL key: works for both /team and /team.html
   App.pageKey = function () {
-    const name = location.pathname.split('/').pop() || '';
+    const name = location.pathname.replace(/\/+$/, '').split('/').pop() || '';
     return (name.includes('.') ? name.replace(/\.html$/, '') : name) || 'index';
   };
 

@@ -1,0 +1,7 @@
+.git
+README.md
+serve.py
+supabase/
+*.log
+.env
+.env.*
