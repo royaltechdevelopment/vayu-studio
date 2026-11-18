@@ -3,7 +3,7 @@
    Logged out: 5 public links. Logged in: Dashboard (commands.html) + 4 public + 5 member links.
    ============================================================ */
 (function () {
-  const SOCIAL = window.APP_CONFIG.SOCIAL;
+  const social = () => App.settings().SOCIAL || {};
 
   const PUBLIC = [
     { href: 'index', label: 'Home', icon: 'fa-house' },
@@ -63,7 +63,7 @@
   }
 
   function footerHTML() {
-    const s = window.APP_CONFIG.SOCIAL;
+    const s = App.settings().SOCIAL || {};
     return `
       <footer class="footer">
         <div class="footer-inner">
@@ -98,7 +98,7 @@
       <button class="btn btn-logout" type="button" data-logout><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>`;
   }
 
-  const discordCta = `<a class="btn btn-discord" href="${App.h(SOCIAL.discord)}" target="_blank" rel="noopener"><i class="fa-brands fa-discord"></i> Join Vayu Empire Discord</a>`;
+  const discordCta = () => `<a class="btn btn-discord" href="${App.h(social().discord || '')}" target="_blank" rel="noopener"><i class="fa-brands fa-discord"></i> Join Vayu Empire Discord</a>`;
 
   // Email/password logins must link Discord before using the workspace.
   // The dialog has no close control, so it stays until the link succeeds.
@@ -180,8 +180,8 @@
       </div>
       <button class="icon-btn" type="button" data-logout title="Logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>` : ''}`;
 
-    if (navSlot) navSlot.innerHTML = `<div class="auth-buttons">${discordCta}${authButtons(profile)}</div>`;
-    if (mobileAuth) mobileAuth.innerHTML = `<div class="auth-buttons">${discordCta}${authButtons(profile)}</div>`;
+    if (navSlot) navSlot.innerHTML = `<div class="auth-buttons">${discordCta()}${authButtons(profile)}</div>`;
+    if (mobileAuth) mobileAuth.innerHTML = `<div class="auth-buttons">${discordCta()}${authButtons(profile)}</div>`;
 
     document.querySelectorAll('[data-logout]').forEach((btn) => {
       btn.addEventListener('click', () => Auth.signOut());
@@ -207,6 +207,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', async () => {
+    await App.loadSettings();
     const header = document.getElementById('site-header');
     const footer = document.getElementById('site-footer');
     if (header) header.innerHTML = headerHTML();

@@ -13,25 +13,8 @@ This file is deployed with the site, so the **Setup required** screens can link 
 
 ```js
 window.APP_CONFIG = {
-  SITE_NAME: 'Vayu Playz',
-
   SUPABASE_URL: 'https://YOUR_PROJECT_ID.supabase.co',
-  SUPABASE_ANON_KEY: 'eyJ...',
-  SITE_URL: 'https://YOUR_PROJECT.vercel.app',
-
-  ADMIN_DISCORD_ID: '123456789012345678',
-  DEFAULT_ADMIN_EMAIL: 'admin@vayuplayz.com',
-
-  YOUTUBE_CHANNEL_ID: 'UCidFGGXE-tVCsYwnRBJ3_RQ',
-  DISCORD_WIDGET_ID: '1504530914128953464',
-  DISCORD_CHAT_CHANNEL_ID: '1504798937989513307',
-
-  SOCIAL: {
-    youtube: 'https://youtube.com/@vayuplayzofficial',
-    instagram: 'https://www.instagram.com/vayuplayzofficial',
-    discord: 'https://discord.gg/eCmwsWw3Bg',
-    mc: 'https://vayumc.fun'
-  }
+  SUPABASE_ANON_KEY: 'eyJ...'
 };
 ```
 
@@ -39,15 +22,18 @@ window.APP_CONFIG = {
 |---|---|
 | `SUPABASE_URL` | Project URL from Supabase → Project Settings → API. |
 | `SUPABASE_ANON_KEY` | **anon public** key from the same page. Never use `service_role`. |
-| `SITE_URL` | Your Vercel URL. Optional — leave empty to use the current browser URL. |
-| `ADMIN_DISCORD_ID` | Your own Discord **user ID** (numbers only). Makes that account `owner`. |
-| `DEFAULT_ADMIN_EMAIL` | Fallback email owner for email signups. |
-| `YOUTUBE_CHANNEL_ID` | Channel used for the live Tutorials RSS sync. |
-| `DISCORD_WIDGET_ID` | Server ID for the Home widget and Team live-member list. |
-| `DISCORD_CHAT_CHANNEL_ID` | Public text channel shown in the Home live chat panel. |
-| `SOCIAL` | Footer/CTA links. Safe to change anytime. |
 
-The only values that **cannot** live here are the Discord **Client ID** and **Client Secret** — they must be pasted into Supabase Auth → Providers → Discord (see step 4 below) because the secret is server-side.
+Everything else lives in Supabase:
+
+| Where | What |
+|---|---|
+| **Auth → URL Configuration** | Site URL + Redirect URLs (this is the old `SITE_URL`). |
+| **Auth → Providers → Discord** | Discord Client ID/Secret + scopes `identify email` (server side). |
+| **`site_content` → `site_settings`** | `ADMIN_DISCORD_ID` (your Discord user ID → owner), `DEFAULT_ADMIN_EMAIL` (fallback owner), `YOUTUBE_CHANNEL_ID`, `DISCORD_WIDGET_ID`, `DISCORD_CHAT_CHANNEL_ID`, `SOCIAL` links. |
+
+`site_settings` is seeded by `supabase/schema.sql` and can be edited any time in **Admin → Site content → `site_settings`**. `js/data.js` keeps the same values as local defaults for unconfigured/local mode. No redeploy needed when you change them.
+
+The Discord **Client Secret** must stay in Supabase (never in the repo or `config.js`) because it is server-side.
 
 ## 2. Discord application (for Discord login)
 
@@ -106,7 +92,7 @@ If the Discord email differs from the account email, open **Authentication → P
 
 1. In Discord, enable **User Settings → Advanced → Developer Mode**.
 2. Right-click your own avatar → **Copy ID** (numbers only).
-3. Paste it into `ADMIN_DISCORD_ID` in `js/config.js`.
+3. Paste it into `site_settings → ADMIN_DISCORD_ID` in **Admin → Site content** (or edit the seed row in `supabase/schema.sql` before running it).
 4. Log in with **Continue with Discord** using that same account.
 5. The app calls `claim_admin_by_discord`. Supabase checks **your own linked Discord identity** against the configured ID and sets your role to `owner`.
 
@@ -120,7 +106,7 @@ Another user cannot become owner by pasting your ID, because the database verifi
 | `invalid_client` / `unauthorized_client` | Client ID/Secret mismatch, or Discord provider is off in Supabase. |
 | Discord callback 404 | Discord redirect must be `https://PROJECT.supabase.co/auth/v1/callback`, not the Vercel URL. |
 | Link popup keeps coming back | Identity not linked yet; enable **Allow manual linking** if emails differ. |
-| Admin button missing | `ADMIN_DISCORD_ID` must match the Discord account actually used to log in, and `schema.sql` must be run. |
+| Admin button missing | `site_settings → ADMIN_DISCORD_ID` must match the Discord account actually used to log in, and `schema.sql` must be run. |
 | Still showing **Setup required** | Placeholder URL/key still in `js/config.js`, or the Supabase JS CDN did not load. |
 
 ## 8. After changing config

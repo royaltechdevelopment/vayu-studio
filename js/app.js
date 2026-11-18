@@ -86,6 +86,30 @@
     return data.data ?? fallback;
   };
 
+  /* Site settings live in Supabase `site_content` (key: site_settings).
+     js/data.js holds the same defaults for local/unconfigured mode. */
+  let siteSettings = null;
+  let settingsPromise = null;
+
+  App.settings = function () {
+    if (!siteSettings) siteSettings = window.SITE_DATA?.site_settings || {};
+    return siteSettings;
+  };
+
+  App.loadSettings = function () {
+    if (!settingsPromise) {
+      settingsPromise = Promise.resolve(App.loadContent('site_settings'))
+        .then((saved) => {
+          const base = window.SITE_DATA?.site_settings || {};
+          siteSettings = { ...base, ...(saved && typeof saved === 'object' ? saved : {}) };
+          siteSettings.SOCIAL = { ...(base.SOCIAL || {}), ...(siteSettings.SOCIAL || {}) };
+          return siteSettings;
+        })
+        .catch(() => App.settings());
+    }
+    return settingsPromise;
+  };
+
   App.saveContent = async function (key, value) {
     if (!window.DB_READY || !window.sb) throw new Error('Supabase is not configured.');
     const user = await Auth.user();

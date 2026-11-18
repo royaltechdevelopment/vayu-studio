@@ -61,6 +61,24 @@ create table if not exists public.site_content (
   updated_by uuid references auth.users(id) on delete set null
 );
 
+-- ---------- site settings (editable in Admin → Site content) ----------
+-- These override the defaults in js/data.js. on conflict keeps admin edits.
+insert into public.site_content (key, data)
+values ('site_settings', '{
+  "ADMIN_DISCORD_ID": "",
+  "DEFAULT_ADMIN_EMAIL": "admin@vayuplayz.com",
+  "YOUTUBE_CHANNEL_ID": "UCidFGGXE-tVCsYwnRBJ3_RQ",
+  "DISCORD_WIDGET_ID": "1504530914128953464",
+  "DISCORD_CHAT_CHANNEL_ID": "1504798937989513307",
+  "SOCIAL": {
+    "youtube": "https://youtube.com/@vayuplayzofficial",
+    "instagram": "https://www.instagram.com/vayuplayzofficial",
+    "discord": "https://discord.gg/eCmwsWw3Bg",
+    "mc": "https://vayumc.fun"
+  }
+}'::jsonb)
+on conflict (key) do nothing;
+
 -- ---------- contact inbox ----------
 create table if not exists public.contact_messages (
   id uuid primary key default gen_random_uuid(),
@@ -110,7 +128,9 @@ revoke all on function public.set_user_role(uuid, text) from public;
 grant execute on function public.set_user_role(uuid, text) to authenticated;
 
 -- ---------- Admin access by Discord ID ----------
--- Put your Discord user ID in js/config.js -> ADMIN_DISCORD_ID.
+-- Set ADMIN_DISCORD_ID in Admin → Site content → site_settings (or in the
+-- seed row above). It is sent by the client but verified against this user's
+-- own Discord identity below.
 -- On login the client calls this function. It checks the signed-in user's OWN
 -- Discord identity, so nobody can claim admin using someone else's ID.
 create or replace function public.claim_admin_by_discord(discord_id text)

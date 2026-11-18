@@ -4,7 +4,7 @@
    ============================================================ */
 (function () {
   const page = document.body.dataset.page;
-  const SOCIAL = window.APP_CONFIG.SOCIAL;
+  const social = () => App.settings().SOCIAL || {};
 
   const CAT_COLORS = {
     linux: 'violet', vps: 'violet', docker: 'lime', git: 'lime',
@@ -21,7 +21,7 @@
   // Live Discord members (widget JSON) — used on Team as a member list,
   // while the iframe widget itself stays on Home only.
   async function discordWidget() {
-    const id = window.APP_CONFIG.DISCORD_WIDGET_ID;
+    const id = App.settings().DISCORD_WIDGET_ID;
     if (!id) return null;
     try {
       const res = await fetch(`https://discord.com/api/guilds/${encodeURIComponent(id)}/widget.json`);
@@ -39,7 +39,7 @@
   // Tutorials sync: read the channel's public RSS feed through a CORS-enabled
   // JSON bridge. Falls back to local content if the feed is unavailable.
   async function youtubeVideos() {
-    const channelId = window.APP_CONFIG.YOUTUBE_CHANNEL_ID;
+    const channelId = App.settings().YOUTUBE_CHANNEL_ID;
     if (!channelId) return null;
     const rss = `https://www.youtube.com/feeds/videos.xml?channel_id=${encodeURIComponent(channelId)}`;
     try {
@@ -54,7 +54,7 @@
         return {
           videoId,
           title: item.title || 'Untitled video',
-          link: item.link || (videoId ? `https://www.youtube.com/watch?v=${videoId}` : SOCIAL.youtube),
+          link: item.link || (videoId ? `https://www.youtube.com/watch?v=${videoId}` : social().youtube),
           thumb: item.thumbnail || (videoId ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg` : ''),
           date: item.pubDate || ''
         };
@@ -79,17 +79,17 @@
 
   function socialCards() {
     return `
-      <a class="card reveal" href="${SOCIAL.discord}" target="_blank" rel="noopener">
+      <a class="card reveal" href="${social().discord}" target="_blank" rel="noopener">
         <div class="card-icon violet"><i class="fa-brands fa-discord"></i></div>
         <h3>Vayu Empire</h3><p>Community, support and updates — on Discord.</p>
         <span class="card-cta">Join server <i class="fa-solid fa-arrow-right"></i></span>
       </a>
-      <a class="card reveal" href="${SOCIAL.youtube}" target="_blank" rel="noopener">
+      <a class="card reveal" href="${social().youtube}" target="_blank" rel="noopener">
         <div class="card-icon red"><i class="fa-brands fa-youtube"></i></div>
         <h3>YouTube</h3><p>Tutorials, gaming and creative experiments.</p>
         <span class="card-cta">Watch channel <i class="fa-solid fa-arrow-right"></i></span>
       </a>
-      <a class="card reveal" href="${SOCIAL.mc}" target="_blank" rel="noopener">
+      <a class="card reveal" href="${social().mc}" target="_blank" rel="noopener">
         <div class="card-icon"><i class="fa-solid fa-cube"></i></div>
         <h3>Vayu MC</h3><p>Multi-mode Minecraft network. Java + Bedrock.</p>
         <span class="card-cta">Visit network <i class="fa-solid fa-arrow-right"></i></span>
@@ -108,7 +108,7 @@
           <p class="lead">${App.h(d.subtitle)}</p>
           <div class="row hero-actions">
             <a class="btn btn-primary" href="commands"><i class="fa-solid fa-terminal"></i> Explore commands</a>
-            <a class="btn btn-ghost" href="${SOCIAL.discord}" target="_blank" rel="noopener"><i class="fa-brands fa-discord"></i> Join community</a>
+            <a class="btn btn-ghost" href="${social().discord}" target="_blank" rel="noopener"><i class="fa-brands fa-discord"></i> Join community</a>
           </div>
         </div>
         <div class="hero-art">
@@ -147,11 +147,11 @@
           ${tag('LIVE', 'lime')}
         </div>
         <iframe class="live-chat-frame"
-          src="https://e.widgetbot.io/channels/${encodeURIComponent(window.APP_CONFIG.DISCORD_WIDGET_ID)}/${encodeURIComponent(window.APP_CONFIG.DISCORD_CHAT_CHANNEL_ID)}?theme=dark"
+          src="https://e.widgetbot.io/channels/${encodeURIComponent(App.settings().DISCORD_WIDGET_ID)}/${encodeURIComponent(App.settings().DISCORD_CHAT_CHANNEL_ID)}?theme=dark"
           title="Vayu Empire live Discord chat" allowtransparency="true"></iframe>
         <div class="live-chat-meta">
           <span><span class="status-dot online"></span> Connected to Discord in real time</span>
-          <a href="${SOCIAL.discord}" target="_blank" rel="noopener">Open in Discord <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          <a href="${social().discord}" target="_blank" rel="noopener">Open in Discord <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
         </div>
       </div>
     `);
@@ -187,7 +187,7 @@
         <div class="spread">
           <div><h3 style="font-family:var(--display);margin:0 0 4px">Get in touch</h3><p class="muted small" style="margin:0">Questions, collaborations, or just want to say hello?</p></div>
           <div class="row">
-            <a class="btn btn-violet sm" href="${SOCIAL.discord}" target="_blank" rel="noopener"><i class="fa-brands fa-discord"></i> Discord</a>
+            <a class="btn btn-violet sm" href="${social().discord}" target="_blank" rel="noopener"><i class="fa-brands fa-discord"></i> Discord</a>
             <a class="btn btn-ghost sm" href="contact"><i class="fa-solid fa-envelope"></i> Contact</a>
           </div>
         </div>
@@ -260,11 +260,11 @@
       `
         <div class="spread reveal" style="margin-bottom:18px">
           <span class="hero-badge"><span class="pulse"></span> ${live ? 'LIVE SYNC · YOUTUBE FEED' : 'CHANNEL FEED · SNAPSHOT'}</span>
-          <a class="btn btn-ghost sm" href="${SOCIAL.youtube}" target="_blank" rel="noopener"><i class="fa-brands fa-youtube"></i> Visit channel</a>
+          <a class="btn btn-ghost sm" href="${social().youtube}" target="_blank" rel="noopener"><i class="fa-brands fa-youtube"></i> Visit channel</a>
         </div>
         <div class="grid g3">
           ${videos.map((v) => `
-            <a class="card video-card reveal" href="${App.h(live ? v.link : SOCIAL.youtube)}" target="_blank" rel="noopener">
+            <a class="card video-card reveal" href="${App.h(live ? v.link : social().youtube)}" target="_blank" rel="noopener">
               <div class="thumb">
                 ${live && v.thumb ? `<img src="${App.h(v.thumb)}" alt="" loading="lazy">` : ''}
                 <span class="play"><i class="fa-solid fa-play"></i></span>
@@ -583,8 +583,8 @@
         <div class="panel reveal">
           <h3 style="font-family:var(--display);margin-top:0">Other ways to reach us</h3>
           <div class="stack">
-            <a class="card" href="${SOCIAL.discord}" target="_blank" rel="noopener"><div class="row"><div class="card-icon violet"><i class="fa-brands fa-discord"></i></div><div><h3>Discord</h3><p>Fastest response — Vayu Empire.</p></div></div></a>
-            <a class="card" href="${SOCIAL.youtube}" target="_blank" rel="noopener"><div class="row"><div class="card-icon red"><i class="fa-brands fa-youtube"></i></div><div><h3>YouTube</h3><p>Comments and community posts.</p></div></div></a>
+            <a class="card" href="${social().discord}" target="_blank" rel="noopener"><div class="row"><div class="card-icon violet"><i class="fa-brands fa-discord"></i></div><div><h3>Discord</h3><p>Fastest response — Vayu Empire.</p></div></div></a>
+            <a class="card" href="${social().youtube}" target="_blank" rel="noopener"><div class="row"><div class="card-icon red"><i class="fa-brands fa-youtube"></i></div><div><h3>YouTube</h3><p>Comments and community posts.</p></div></div></a>
           </div>
         </div>
       </div>
@@ -706,6 +706,7 @@
   const PUBLIC_PAGES = ['home', 'about', 'team', 'tutorials', 'contact', 'login', 'register'];
 
   document.addEventListener('DOMContentLoaded', async () => {
+    await App.loadSettings();
     const render = pages[page];
     if (!render) return;
     App.mount(App.loading());

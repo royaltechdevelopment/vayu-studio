@@ -9,12 +9,12 @@ Same content as the old `vayu-web` repo, rebuilt with a **new visual style**. St
 - **Pages:** Home, About, Team, Tutorials, Command Guide, Commands, Links, Files, FAQ, Contact, Login, Register, Admin.
 - **Design:** Obsidian background with acid-lime/violet accents, Space Grotesk headings, dot-grid layout, fully responsive. This replaces the old cyan-glass/video-background style.
 - **Auth:** Email/password + **Discord login** through Supabase Auth.
-- **Roles:** `user`, `admin`, `owner`. New signups start as `user`. Put your Discord user ID in `ADMIN_DISCORD_ID` and that account becomes `owner` on login.
+- **Roles:** `user`, `admin`, `owner`. New signups start as `user`. Put your Discord user ID in **Admin → Site content → `site_settings` → `ADMIN_DISCORD_ID`** (Supabase) and that account becomes `owner` on login.
 - **Admin panel:** Overview, JSON content editor (every section is editable), Users & roles, Contact inbox.
 - **Real auth only:** There is no demo mode. Until Supabase is configured, member pages show a **Setup required** screen and no fake member access is possible.
 - **Discord presence:** Home keeps the Discord widget embed. Team shows a live member list fetched from Discord's public widget API, without the embed.
 - **Nav CTA:** A **Join Vayu Empire Discord** button is always available in the header nav and mobile menu.
-- **Tutorials sync:** Videos come live from the channel RSS feed using `YOUTUBE_CHANNEL_ID` in `js/config.js`; local content in `js/data.js` is the fallback.
+- **Tutorials sync:** Videos come live from the channel RSS feed using `YOUTUBE_CHANNEL_ID` from Supabase `site_settings`; `js/data.js` holds the local defaults.
 
 ## Running locally
 
@@ -39,16 +39,16 @@ A copy-paste, deployed version of this guide — with the full Discord OAuth ste
 
 ```js
 SUPABASE_URL: 'https://YOUR_PROJECT_ID.supabase.co',
-SUPABASE_ANON_KEY: 'eyJ...',
-SITE_URL: 'http://localhost:8000',  // use your Vercel URL in production
-ADMIN_DISCORD_ID: '123456789012345678', // your Discord user ID -> owner
-DEFAULT_ADMIN_EMAIL: 'admin@vayuplayz.com',
-YOUTUBE_CHANNEL_ID: 'UCidFGGXE-tVCsYwnRBJ3_RQ',
-DISCORD_WIDGET_ID: '1504530914128953464',
-DISCORD_CHAT_CHANNEL_ID: '1504798937989513307'
+SUPABASE_ANON_KEY: 'eyJ...'
 ```
 
-The full annotated config block is in [SETUP.md](SETUP.md).
+Everything else is stored in Supabase:
+
+- **Auth → URL Configuration:** Site URL + Redirect URLs (replaces `SITE_URL`).
+- **Auth → Providers → Discord:** Client ID/Secret (server side).
+- **Table `site_content`, key `site_settings`:** admin Discord ID, owner email, social links, YouTube channel and Discord widget/chat IDs. Seeded by `schema.sql`; edit in **Admin → Site content** (defaults in `js/data.js`).
+
+The full annotated setup is in [SETUP.md](SETUP.md).
 
 ### Enabling Discord login
 
@@ -64,7 +64,7 @@ The full annotated config block is in [SETUP.md](SETUP.md).
 
 ### Becoming an admin
 
-1. Paste your Discord **user ID** (numbers only) into `ADMIN_DISCORD_ID` in `js/config.js`.
+1. Paste your Discord **user ID** (numbers only) into `site_settings → ADMIN_DISCORD_ID` in **Admin → Site content** (or edit the seed row in `supabase/schema.sql` before running it).
 2. Log in with **Continue with Discord** using that same Discord account.
 3. The app calls `claim_admin_by_discord`, which checks your own Discord identity in the database and sets your role to `owner`. The **Admin** button then appears in the header.
 
@@ -100,7 +100,7 @@ All internal links use extensionless paths such as `/team`, `/commands` and `/lo
 
 ## Content editing
 
-In Admin → **Site content**, select any section (`home`, `about`, `team`, `commands`, `faq`, …), edit the JSON, and save. The site loads the new data immediately. Defaults live in `js/data.js` and are used as the fallback when Supabase has no row for a section.
+In Admin → **Site content**, select any section (`home`, `about`, `site_settings`, `team`, `commands`, `faq`, …), edit the JSON, and save. `site_settings` holds the admin Discord ID, owner email, social links and widget/channel IDs. The site loads the new data immediately. Defaults live in `js/data.js` and are used as the fallback when Supabase has no row for a section.
 
 ## Files
 

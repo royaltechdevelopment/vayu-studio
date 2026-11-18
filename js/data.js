@@ -276,6 +276,21 @@ window.SITE_DATA = {
         ]
       }
     ]
+  },
+
+  // Editable in Admin → Site content. Supabase overrides these defaults.
+  site_settings: {
+    ADMIN_DISCORD_ID: '',
+    DEFAULT_ADMIN_EMAIL: 'admin@vayuplayz.com',
+    YOUTUBE_CHANNEL_ID: 'UCidFGGXE-tVCsYwnRBJ3_RQ',
+    DISCORD_WIDGET_ID: '1504530914128953464',
+    DISCORD_CHAT_CHANNEL_ID: '1504798937989513307',
+    SOCIAL: {
+      youtube: 'https://youtube.com/@vayuplayzofficial',
+      instagram: 'https://www.instagram.com/vayuplayzofficial',
+      discord: 'https://discord.gg/eCmwsWw3Bg',
+      mc: 'https://vayumc.fun'
+    }
   }
 };
 

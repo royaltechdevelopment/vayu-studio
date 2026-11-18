@@ -8,6 +8,13 @@
   const url = String(cfg.SUPABASE_URL || '').trim();
   const key = String(cfg.SUPABASE_ANON_KEY || '').trim();
 
+  // Site settings + social/admin values now live in Supabase (site_content),
+  // with js/data.js as the local fallback. SITE_URL is configured in
+  // Supabase → Authentication → URL Configuration.
+  const settings = () => (window.App?.settings?.() || window.SITE_DATA?.site_settings || {});
+  const siteBase = () =>
+    (window.location.origin + window.location.pathname.replace(/[^/]*$/, '')).replace(/\/$/, '');
+
   const looksConfigured =
     /^https:\/\/[\w-]+\.supabase\.co\/?$/.test(url) &&
     key.length > 20 &&
@@ -31,7 +38,7 @@
     // Promote the configured Discord account to owner. The RPC verifies that
     // the current user's own Discord identity matches ADMIN_DISCORD_ID.
     async ensureAdminRole(user) {
-      const adminId = String(cfg.ADMIN_DISCORD_ID || '').trim();
+      const adminId = String(settings().ADMIN_DISCORD_ID || '').trim();
       if (!adminId || !window.sb || !user) return;
       const flag = ADMIN_CLAIM_FLAG + user.id;
       if (sessionStorage.getItem(flag) === '1') return;
@@ -82,8 +89,7 @@
 
     async linkDiscord(redirectTo) {
       if (!window.sb) throw new Error('Configure Supabase before linking Discord.');
-      const base = (cfg.SITE_URL || window.location.origin + window.location.pathname.replace(/[^/]*$/, ''))
-        .replace(/\/$/, '');
+      const base = siteBase();
       const { error } = await window.sb.auth.linkIdentity({
         provider: 'discord',
         options: {
@@ -114,14 +120,14 @@
 
       if (!profile) {
         const meta = user.user_metadata || {};
-        const adminId = String(cfg.ADMIN_DISCORD_ID || '').trim();
+        const adminId = String(settings().ADMIN_DISCORD_ID || '').trim();
         const discordId = String(meta.provider_id || meta.user_id || meta.discord_id || '');
         const isOwner = Boolean(adminId && discordId && discordId === adminId);
         profile = {
           id: user.id,
           email: user.email,
           full_name: meta.full_name || meta.name || meta.user_name || user.email?.split('@')[0] || 'Member',
-          role: isOwner || user.email === cfg.DEFAULT_ADMIN_EMAIL
+          role: isOwner || user.email === settings().DEFAULT_ADMIN_EMAIL
             ? 'owner'
             : meta.role || 'user',
           avatar_url: meta.avatar_url || ''
@@ -157,8 +163,7 @@
     /* Discord OAuth (Supabase Auth provider) */
     async signInWithDiscord(redirectTo) {
       if (!window.sb) throw new Error('Configure Supabase before using Discord login.');
-      const base = (cfg.SITE_URL || window.location.origin + window.location.pathname.replace(/[^/]*$/, ''))
-        .replace(/\/$/, '');
+      const base = siteBase();
       const { error } = await window.sb.auth.signInWithOAuth({
         provider: 'discord',
         options: {
