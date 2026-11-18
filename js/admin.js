@@ -101,13 +101,15 @@
     },
     {
       key: 'tutorials', label: 'Tutorials', icon: 'fa-play', page: 'tutorials',
-      desc: 'Video list with level and duration. Live YouTube videos load separately.',
+      desc: 'Page heading. Video cards auto-sync from the YouTube channel — the list below is only an offline fallback.',
       fields: [
         { k: 'kicker', label: 'Kicker / label' },
         { k: 'title', label: 'Title' },
         { k: 'subtitle', label: 'Subtitle', type: 'area' },
         {
-          k: 'videos', label: 'Videos', type: 'list', itemLabel: (i) => i.title || 'Video', fields: [
+          k: 'videos', label: 'Fallback videos', type: 'list',
+          hint: 'Only shown if the live YouTube sync fails. Normal uploads appear automatically — no need to add them here.',
+          itemLabel: (i) => i.title || 'Video', fields: [
             { k: 'title', label: 'Title' },
             { k: 'level', label: 'Level', type: 'select', options: LEVELS },
             { k: 'duration', label: 'Duration', hint: 'e.g. 12:40' },
