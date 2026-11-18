@@ -40,9 +40,15 @@ A copy-paste, deployed version of this guide — with the full Discord OAuth ste
 ```js
 SUPABASE_URL: 'https://YOUR_PROJECT_ID.supabase.co',
 SUPABASE_ANON_KEY: 'eyJ...',
-SITE_URL: 'http://localhost:8000',  // use your domain in production
-ADMIN_DISCORD_ID: '123456789012345678' // your Discord user ID -> owner
+SITE_URL: 'http://localhost:8000',  // use your Vercel URL in production
+ADMIN_DISCORD_ID: '123456789012345678', // your Discord user ID -> owner
+DEFAULT_ADMIN_EMAIL: 'admin@vayuplayz.com',
+YOUTUBE_CHANNEL_ID: 'UCidFGGXE-tVCsYwnRBJ3_RQ',
+DISCORD_WIDGET_ID: '1504530914128953464',
+DISCORD_CHAT_CHANNEL_ID: '1504798937989513307'
 ```
+
+The full annotated config block is in [SETUP.md](SETUP.md).
 
 ### Enabling Discord login
 

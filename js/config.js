@@ -1,6 +1,11 @@
 /* ============================================================
    VAYU STUDIO — CONFIG
-   After creating a Supabase project, paste its URL and anon key here.
+   All public site values live in this one file: Supabase URL/key,
+   SITE_URL, admin Discord ID, YouTube channel, Discord widget/chat IDs
+   and social links. See SETUP.md for the annotated list.
+
+   Discord Client ID/Secret are NOT stored here — they belong in
+   Supabase → Authentication → Providers → Discord (server side).
    ============================================================ */
 window.APP_CONFIG = {
   SITE_NAME: 'Vayu Playz',

@@ -9,16 +9,45 @@ This file is deployed with the site, so the **Setup required** screens can link 
 3. Open **Project Settings → API** and copy:
    - **Project URL**
    - **anon public** key
-4. Paste them into `js/config.js`:
+4. All site values live in **one file — `js/config.js`**. Update this full block:
 
 ```js
-SUPABASE_URL: 'https://YOUR_PROJECT_ID.supabase.co',
-SUPABASE_ANON_KEY: 'eyJ...',
-SITE_URL: 'https://YOUR_PROJECT.vercel.app',
-ADMIN_DISCORD_ID: '123456789012345678'
+window.APP_CONFIG = {
+  SITE_NAME: 'Vayu Playz',
+
+  SUPABASE_URL: 'https://YOUR_PROJECT_ID.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJ...',
+  SITE_URL: 'https://YOUR_PROJECT.vercel.app',
+
+  ADMIN_DISCORD_ID: '123456789012345678',
+  DEFAULT_ADMIN_EMAIL: 'admin@vayuplayz.com',
+
+  YOUTUBE_CHANNEL_ID: 'UCidFGGXE-tVCsYwnRBJ3_RQ',
+  DISCORD_WIDGET_ID: '1504530914128953464',
+  DISCORD_CHAT_CHANNEL_ID: '1504798937989513307',
+
+  SOCIAL: {
+    youtube: 'https://youtube.com/@vayuplayzofficial',
+    instagram: 'https://www.instagram.com/vayuplayzofficial',
+    discord: 'https://discord.gg/eCmwsWw3Bg',
+    mc: 'https://vayumc.fun'
+  }
+};
 ```
 
-`SITE_URL` is optional. Leave it empty to use the current browser URL.
+| Field | What to put there |
+|---|---|
+| `SUPABASE_URL` | Project URL from Supabase → Project Settings → API. |
+| `SUPABASE_ANON_KEY` | **anon public** key from the same page. Never use `service_role`. |
+| `SITE_URL` | Your Vercel URL. Optional — leave empty to use the current browser URL. |
+| `ADMIN_DISCORD_ID` | Your own Discord **user ID** (numbers only). Makes that account `owner`. |
+| `DEFAULT_ADMIN_EMAIL` | Fallback email owner for email signups. |
+| `YOUTUBE_CHANNEL_ID` | Channel used for the live Tutorials RSS sync. |
+| `DISCORD_WIDGET_ID` | Server ID for the Home widget and Team live-member list. |
+| `DISCORD_CHAT_CHANNEL_ID` | Public text channel shown in the Home live chat panel. |
+| `SOCIAL` | Footer/CTA links. Safe to change anytime. |
+
+The only values that **cannot** live here are the Discord **Client ID** and **Client Secret** — they must be pasted into Supabase Auth → Providers → Discord (see step 4 below) because the secret is server-side.
 
 ## 2. Discord application (for Discord login)
 
