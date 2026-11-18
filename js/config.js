@@ -31,5 +31,7 @@ window.APP_CONFIG = {
   },
 
   DISCORD_WIDGET_ID: '1504530914128953464',
-  DISCORD_CHANNEL_ID: '1504802094530560010'
+
+  // Public text channel shown in the Home page live Discord chat panel.
+  DISCORD_CHAT_CHANNEL_ID: '1504798937989513307'
 };

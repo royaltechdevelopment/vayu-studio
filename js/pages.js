@@ -139,10 +139,20 @@
       <div class="grid g3 reveal" style="margin-bottom:26px">${socialCards()}</div>
 
       <div class="panel reveal" style="margin-top:26px">
-        <div class="spread" style="margin-bottom:14px"><h3 style="font-family:var(--display);margin:0">Community live</h3>${tag('DISCORD', 'violet')}</div>
-        <iframe src="https://discord.com/widget?id=${encodeURIComponent(window.APP_CONFIG.DISCORD_WIDGET_ID)}&theme=dark"
-          width="100%" height="300" allowtransparency="true" frameborder="0"
-          style="border-radius:10px;background:#0c0e14"></iframe>
+        <div class="spread" style="margin-bottom:14px">
+          <div>
+            <h3 style="font-family:var(--display);margin:0">Live Discord chat</h3>
+            <p class="muted small" style="margin:3px 0 0">Real messages from Vayu Empire's public chat.</p>
+          </div>
+          ${tag('LIVE', 'lime')}
+        </div>
+        <iframe class="live-chat-frame"
+          src="https://e.widgetbot.io/channels/${encodeURIComponent(window.APP_CONFIG.DISCORD_WIDGET_ID)}/${encodeURIComponent(window.APP_CONFIG.DISCORD_CHAT_CHANNEL_ID)}?theme=dark"
+          title="Vayu Empire live Discord chat" allowtransparency="true"></iframe>
+        <div class="live-chat-meta">
+          <span><span class="status-dot online"></span> Connected to Discord in real time</span>
+          <a href="${SOCIAL.discord}" target="_blank" rel="noopener">Open in Discord <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+        </div>
       </div>
     `);
   }
