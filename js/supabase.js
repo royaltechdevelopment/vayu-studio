@@ -83,7 +83,7 @@
       const { error } = await window.sb.auth.linkIdentity({
         provider: 'discord',
         options: {
-          redirectTo: redirectTo || `${base}/index.html`,
+          redirectTo: redirectTo || `${base}/`,
           scopes: 'identify email'
         }
       });
@@ -158,7 +158,7 @@
       const { error } = await window.sb.auth.signInWithOAuth({
         provider: 'discord',
         options: {
-          redirectTo: redirectTo || `${base}/index.html`,
+          redirectTo: redirectTo || `${base}/`,
           scopes: 'identify email'
         }
       });
@@ -172,7 +172,7 @@
       Object.keys(sessionStorage)
         .filter((k) => k.startsWith(ADMIN_CLAIM_FLAG))
         .forEach((k) => sessionStorage.removeItem(k));
-      window.location.href = 'index.html';
+      window.location.href = 'index';
     },
 
     onAuthChange(cb) {

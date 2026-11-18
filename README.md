@@ -82,9 +82,13 @@ If linking fails because the Discord email does not match the account email, ena
 
 Without logging in, only **Home, Team, Tutorials, About and Contact** are visible. Everything else — Commands, Command Guide, Links, Files, FAQ and Admin — unlocks after login.
 
-- In real mode, opening a gated page redirects to `login.html?redirect=...`; after login you return to that page.
+- In real mode, opening a gated page redirects to `login?redirect=...`; after login you return to that page.
 - If Supabase is not configured, gated pages show a **Setup required** screen instead of any member UI.
-- The logged-out nav shows 5 public links; after login the first link becomes **Dashboard** (`commands.html`) and the 5 member links are added.
+- The logged-out nav shows 5 public links; after login the first link becomes **Dashboard** (`commands`) and the 5 member links are added.
+
+## Clean URLs
+
+All internal links use extensionless paths such as `/team`, `/commands` and `/login`. The `.html` files stay on disk. `vercel.json` enables `cleanUrls`, so Vercel serves `/team` from `team.html` and redirects `/team.html` to `/team`. For local preview use `python3 serve.py` instead of `python3 -m http.server`, because Python's default server does not resolve extensionless paths.
 
 ## Content editing
 

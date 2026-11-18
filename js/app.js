@@ -16,6 +16,12 @@
   App.qs = (sel, root = document) => root.querySelector(sel);
   App.qsa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
+  // Clean URL key: works for both /team and /team.html
+  App.pageKey = function () {
+    const name = location.pathname.split('/').pop() || '';
+    return (name.includes('.') ? name.replace(/\.html$/, '') : name) || 'index';
+  };
+
   App.toast = function (message, type = 'ok') {
     let el = document.getElementById('toast');
     if (!el) {
@@ -119,7 +125,7 @@
     const profile = await Auth.profile();
     if (profile) return profile;
 
-    const target = redirect || location.pathname.split('/').pop() || 'index.html';
+    const target = redirect || App.pageKey();
 
     if (!window.DB_READY) {
       App.mount(App.shell('SETUP REQUIRED', 'Supabase is not configured.', 'Add your project credentials to enable login and member pages.', `
@@ -129,20 +135,20 @@
           <p class="muted">Open <code>js/config.js</code>, paste your Supabase URL and anon key, then run <code>supabase/schema.sql</code> in the SQL Editor. Full steps are in <code>README.md</code>.</p>
           <div class="row" style="margin-top:20px">
             <a class="btn btn-ghost" href="README.md" target="_blank" rel="noopener"><i class="fa-solid fa-book"></i> Setup guide</a>
-            <a class="btn btn-primary" href="login.html"><i class="fa-solid fa-right-to-bracket"></i> Go to login</a>
+            <a class="btn btn-primary" href="login"><i class="fa-solid fa-right-to-bracket"></i> Go to login</a>
           </div>
         </div>`));
       return null;
     }
 
-    window.location.href = `login.html?redirect=${encodeURIComponent(target)}`;
+    window.location.href = `login?redirect=${encodeURIComponent(target)}`;
     return null;
   };
 
   App.requireAdmin = async function () {
     const profile = await Auth.profile();
     if (!profile) {
-      window.location.href = 'login.html?redirect=admin.html';
+      window.location.href = 'login?redirect=admin';
       return null;
     }
     if (!Auth.isAdmin(profile)) {
@@ -151,7 +157,7 @@
           <i class="fa-solid fa-lock"></i>
           <h3>Restricted</h3>
           <p><code>${App.h(profile.email)}</code> is a regular member account.</p>
-          <a class="btn btn-ghost" href="index.html">Back to home</a>
+          <a class="btn btn-ghost" href="index">Back to home</a>
         </div>`));
       return null;
     }

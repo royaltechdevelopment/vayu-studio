@@ -6,27 +6,27 @@
   const SOCIAL = window.APP_CONFIG.SOCIAL;
 
   const PUBLIC = [
-    { href: 'index.html', label: 'Home', icon: 'fa-house' },
-    { href: 'team.html', label: 'Team', icon: 'fa-users' },
-    { href: 'tutorials.html', label: 'Tutorials', icon: 'fa-play' },
-    { href: 'about.html', label: 'About', icon: 'fa-circle-info' },
-    { href: 'contact.html', label: 'Contact', icon: 'fa-envelope' }
+    { href: 'index', label: 'Home', icon: 'fa-house' },
+    { href: 'team', label: 'Team', icon: 'fa-users' },
+    { href: 'tutorials', label: 'Tutorials', icon: 'fa-play' },
+    { href: 'about', label: 'About', icon: 'fa-circle-info' },
+    { href: 'contact', label: 'Contact', icon: 'fa-envelope' }
   ];
 
   const MEMBERS = [
-    { href: 'commands.html', label: 'Commands', icon: 'fa-terminal' },
-    { href: 'tutorial-guide.html', label: 'Command Guide', icon: 'fa-book' },
-    { href: 'links.html', label: 'Links', icon: 'fa-link' },
-    { href: 'files.html', label: 'Files', icon: 'fa-folder' },
-    { href: 'faq.html', label: 'FAQ', icon: 'fa-circle-question' }
+    { href: 'commands', label: 'Commands', icon: 'fa-terminal' },
+    { href: 'tutorial-guide', label: 'Command Guide', icon: 'fa-book' },
+    { href: 'links', label: 'Links', icon: 'fa-link' },
+    { href: 'files', label: 'Files', icon: 'fa-folder' },
+    { href: 'faq', label: 'FAQ', icon: 'fa-circle-question' }
   ];
 
-  const current = location.pathname.split('/').pop() || 'index.html';
+  const current = App.pageKey();
 
   // The first nav slot becomes the members' dashboard after login.
   function homeItem(profile) {
     return profile
-      ? { href: 'commands.html', label: 'Dashboard', icon: 'fa-gauge-high' }
+      ? { href: 'commands', label: 'Dashboard', icon: 'fa-gauge-high' }
       : PUBLIC[0];
   }
 
@@ -40,7 +40,7 @@
     return `
       <header class="topbar">
         <div class="topbar-top">
-          <a class="brand" href="index.html" aria-label="Vayu Playz home">
+          <a class="brand" href="index" aria-label="Vayu Playz home">
             <span class="brand-mark">V</span>
             <span class="brand-copy"><strong>Vayu <em>Playz</em></strong><small>official ecosystem</small></span>
           </a>
@@ -88,11 +88,11 @@
   function authButtons(profile) {
     if (!profile) {
       return `
-        <a class="btn btn-login" href="login.html"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
-        <a class="btn btn-register" href="register.html"><i class="fa-solid fa-user-plus"></i> Register</a>`;
+        <a class="btn btn-login" href="login"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
+        <a class="btn btn-register" href="register"><i class="fa-solid fa-user-plus"></i> Register</a>`;
     }
     const admin = Auth.isAdmin(profile)
-      ? '<a class="btn btn-login" href="admin.html"><i class="fa-solid fa-shield-halved"></i> Admin</a>'
+      ? '<a class="btn btn-login" href="admin"><i class="fa-solid fa-shield-halved"></i> Admin</a>'
       : '';
     return `${admin}
       <button class="btn btn-logout" type="button" data-logout><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>`;
@@ -136,7 +136,7 @@
       btn.disabled = true;
       btn.innerHTML = '<span class="spinner"></span> Opening Discord…';
       try {
-        await Auth.linkDiscord(`${location.origin}${location.pathname.replace(/[^/]*$/, '')}index.html`);
+        await Auth.linkDiscord(`${location.origin}${location.pathname.replace(/[^/]*$/, '')}`);
       } catch (err) {
         App.toast(err.message, 'err');
         btn.classList.remove('spinner-btn');

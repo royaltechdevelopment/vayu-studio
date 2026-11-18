@@ -15,7 +15,7 @@
   const param = (name) => new URLSearchParams(location.search).get(name);
   const safeRedirect = () => {
     const r = param('redirect');
-    return r && !r.startsWith('http') ? r : 'index.html';
+    return r && !r.startsWith('http') ? r : 'index';
   };
 
   // Live Discord members (widget JSON) — used on Team as a member list,
@@ -107,7 +107,7 @@
           <h1>${App.h(d.title)}<span>${App.h(d.highlight)}</span></h1>
           <p class="lead">${App.h(d.subtitle)}</p>
           <div class="row hero-actions">
-            <a class="btn btn-primary" href="commands.html"><i class="fa-solid fa-terminal"></i> Explore commands</a>
+            <a class="btn btn-primary" href="commands"><i class="fa-solid fa-terminal"></i> Explore commands</a>
             <a class="btn btn-ghost" href="${SOCIAL.discord}" target="_blank" rel="noopener"><i class="fa-brands fa-discord"></i> Join community</a>
           </div>
         </div>
@@ -178,7 +178,7 @@
           <div><h3 style="font-family:var(--display);margin:0 0 4px">Get in touch</h3><p class="muted small" style="margin:0">Questions, collaborations, or just want to say hello?</p></div>
           <div class="row">
             <a class="btn btn-violet sm" href="${SOCIAL.discord}" target="_blank" rel="noopener"><i class="fa-brands fa-discord"></i> Discord</a>
-            <a class="btn btn-ghost sm" href="contact.html"><i class="fa-solid fa-envelope"></i> Contact</a>
+            <a class="btn btn-ghost sm" href="contact"><i class="fa-solid fa-envelope"></i> Contact</a>
           </div>
         </div>
       </div>
@@ -618,7 +618,7 @@
             <div class="field"><label>Password</label><input id="lPass" type="password" required autocomplete="current-password"></div>
             <button class="btn btn-primary btn-block" type="submit"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
           </form>
-          <p class="center small muted" style="margin-bottom:0">New account? <a class="accent" href="register.html?redirect=${encodeURIComponent(redirect)}">Register here</a></p>
+          <p class="center small muted" style="margin-bottom:0">New account? <a class="accent" href="register?redirect=${encodeURIComponent(redirect)}">Register here</a></p>
         </div>
       </div>
     `);
@@ -659,7 +659,7 @@
             <div class="field"><label>Confirm password</label><input id="rPass2" type="password" required minlength="6" autocomplete="new-password"></div>
             <button class="btn btn-primary btn-block" type="submit"><i class="fa-solid fa-user-plus"></i> Create account</button>
           </form>
-          <p class="center small muted" style="margin-bottom:0">Already have an account? <a class="accent" href="login.html?redirect=${encodeURIComponent(redirect)}">Log in</a></p>
+          <p class="center small muted" style="margin-bottom:0">Already have an account? <a class="accent" href="login?redirect=${encodeURIComponent(redirect)}">Log in</a></p>
         </div>
       </div>
     `);

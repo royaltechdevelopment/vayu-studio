@@ -25,7 +25,7 @@
         <section class="admin-main">
           <div class="admin-head reveal">
             <div><span class="section-label">ADMIN / CONTROL ROOM</span><h2>${App.h(profile.full_name || 'Admin')} <span class="tag lime">${App.h(profile.role)}</span></h2></div>
-            <a class="btn btn-ghost sm" href="index.html"><i class="fa-solid fa-arrow-left"></i> Back to site</a>
+            <a class="btn btn-ghost sm" href="index"><i class="fa-solid fa-arrow-left"></i> Back to site</a>
           </div>
           <div id="adminView" class="reveal"></div>
         </section>
@@ -209,7 +209,7 @@
           <i class="fa-solid fa-shield-halved"></i>
           <h3>Admin panel — setup required</h3>
           <p>First add the Supabase URL and anon key to <b>js/config.js</b>, then run <b>supabase/schema.sql</b>.<br>Discord login is enabled in the same setup (see README).</p>
-          <a class="btn btn-ghost" href="index.html"><i class="fa-solid fa-arrow-left"></i> Back to site</a>
+          <a class="btn btn-ghost" href="index"><i class="fa-solid fa-arrow-left"></i> Back to site</a>
         </div>`);
       return;
     }
