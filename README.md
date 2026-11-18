@@ -30,6 +30,8 @@ python3 -m http.server 8000
 
 ## Supabase setup (5 minutes)
 
+A copy-paste, deployed version of this guide — with the full Discord OAuth steps and troubleshooting — is in [SETUP.md](SETUP.md).
+
 1. Create a project at [supabase.com](https://supabase.com).
 2. In **SQL Editor → New query**, paste the full contents of `supabase/schema.sql` and run it.
 3. In Project Settings → API, copy the **Project URL** and **anon public key**.
@@ -99,6 +101,7 @@ In Admin → **Site content**, select any section (`home`, `about`, `team`, `com
 ```
 vayu-studio/
 ├── index.html, about.html, …        # pages
+├── SETUP.md                          # deployed setup guide (Discord auth included)
 ├── css/styles.css                    # new design system
 ├── css/all.min.css + fonts/          # Font Awesome (from the old repo)
 ├── images/                           # from the old repo (including file previews)

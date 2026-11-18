@@ -44,7 +44,7 @@
     ]);
     const view = document.getElementById('adminView');
     view.innerHTML = `
-      ${window.DB_READY ? '' : '<div class="notice">Supabase is not configured. See <b>README.md</b> and <b>supabase/schema.sql</b> for setup.</div>'}
+      ${window.DB_READY ? '' : '<div class="notice">Supabase is not configured. See <b>SETUP.md</b> and <b>supabase/schema.sql</b> for setup.</div>'}
       <div class="grid g3">
         <div class="panel"><div class="stat-value">${users}</div><div class="stat-label">Registered users</div></div>
         <div class="panel"><div class="stat-value">${sections}</div><div class="stat-label">Content sections</div></div>
@@ -107,7 +107,7 @@
     const view = document.getElementById('adminView');
     view.innerHTML = `<div class="panel">${App.loading('Loading users')}</div>`;
     if (!window.DB_READY) {
-      view.innerHTML = '<div class="panel"><div class="notice">Supabase is not configured. See README.md for setup.</div></div>';
+      view.innerHTML = '<div class="panel"><div class="notice">Supabase is not configured. See SETUP.md for setup.</div></div>';
       return;
     }
     const { data, error } = await window.sb.from('profiles').select('*').order('created_at', { ascending: false });
@@ -155,7 +155,7 @@
     const view = document.getElementById('adminView');
     view.innerHTML = `<div class="panel">${App.loading('Loading messages')}</div>`;
     if (!window.DB_READY) {
-      view.innerHTML = '<div class="panel"><div class="notice">Supabase is not configured. See README.md for setup.</div></div>';
+      view.innerHTML = '<div class="panel"><div class="notice">Supabase is not configured. See SETUP.md for setup.</div></div>';
       return;
     }
     const { data, error } = await window.sb.from('contact_messages').select('*').order('created_at', { ascending: false });

@@ -140,9 +140,9 @@
         <div class="panel locked-panel">
           <div class="locked-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
           <h3>Connect Supabase to continue</h3>
-          <p class="muted">Open <code>js/config.js</code>, paste your Supabase URL and anon key, then run <code>supabase/schema.sql</code> in the SQL Editor. Full steps are in <code>README.md</code>.</p>
+          <p class="muted">Open <code>js/config.js</code>, paste your Supabase URL and anon key, then run <code>supabase/schema.sql</code> in the SQL Editor. Full steps are in <code>SETUP.md</code>.</p>
           <div class="row" style="margin-top:20px">
-            <a class="btn btn-ghost" href="README.md" target="_blank" rel="noopener"><i class="fa-solid fa-book"></i> Setup guide</a>
+            <a class="btn btn-ghost" href="SETUP.md" target="_blank" rel="noopener"><i class="fa-solid fa-book"></i> Setup guide</a>
             <a class="btn btn-primary" href="login"><i class="fa-solid fa-right-to-bracket"></i> Go to login</a>
           </div>
         </div>`));

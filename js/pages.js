@@ -571,7 +571,7 @@
     App.mount(App.shell('11 / CONTACT', 'Say hello.', 'Questions, suggestions or collaborations — send a message and it will appear in the admin inbox.', `
       <div class="grid g2">
         <div class="panel reveal">
-          ${window.DB_READY ? '' : '<div class="notice">Setup required: messages are saved only after Supabase is configured. See <b>README.md</b>.</div>'}
+          ${window.DB_READY ? '' : '<div class="notice">Setup required: messages are saved only after Supabase is configured. See <b>SETUP.md</b>.</div>'}
           <form id="contactForm" class="stack">
             <div class="field"><label>Your name</label><input id="cName" type="text" required placeholder="Vayu fan"></div>
             <div class="field"><label>Email</label><input id="cEmail" type="email" required placeholder="you@example.com"></div>
@@ -620,7 +620,7 @@
             <h1>Welcome back.</h1>
             <p>Log in to your Vayu workspace.</p>
           </div>
-          ${window.DB_READY ? '' : '<div class="notice">Supabase is not configured yet. See <a class="accent" href="README.md" target="_blank" rel="noopener">the setup guide</a>.</div>'}
+          ${window.DB_READY ? '' : '<div class="notice">Supabase is not configured yet. See <a class="accent" href="SETUP.md" target="_blank" rel="noopener">the setup guide</a>.</div>'}
           <button class="oauth-btn" type="button" id="discordLogin"><i class="fa-brands fa-discord"></i> Continue with Discord</button>
           <div class="or">OR</div>
           <form id="loginForm" class="stack">
@@ -659,7 +659,7 @@
             <h1>Join the ecosystem.</h1>
             <p>Create a free account and unlock the tools.</p>
           </div>
-          ${window.DB_READY ? '' : '<div class="notice">Supabase is not configured yet. Add your URL and anon key in <b>js/config.js</b> first.</div>'}
+          ${window.DB_READY ? '' : '<div class="notice">Supabase is not configured yet. Add your URL and anon key in <b>js/config.js</b> first. <a class="accent" href="SETUP.md" target="_blank" rel="noopener">Setup guide</a>.</div>'}
           <button class="oauth-btn" type="button" id="discordSignup"><i class="fa-brands fa-discord"></i> Continue with Discord</button>
           <div class="or">OR</div>
           <form id="registerForm" class="stack">
