@@ -10,7 +10,7 @@ Same content as the old `vayu-web` repo, rebuilt with a **new visual style**. St
 - **Design:** Obsidian background with acid-lime/violet accents, Space Grotesk headings, dot-grid layout, fully responsive. This replaces the old cyan-glass/video-background style.
 - **Auth:** Email/password + **Discord login** through Supabase Auth.
 - **Roles:** `user`, `admin`, `owner`. New signups start as `user`. Put your Discord user ID in **Admin → Site content → `site_settings` → `ADMIN_DISCORD_ID`** (Supabase) and that account becomes `owner` on login.
-- **Admin panel:** Overview, JSON content editor (every section is editable), Users & roles, Contact inbox.
+- **Admin panel:** Overview, form-based content editor (every page and list is editable — add, remove, reorder items), Users & roles, Contact inbox, plus a raw JSON tab for edge cases.
 - **Real auth only:** There is no demo mode. Until Supabase is configured, member pages show a **Setup required** screen and no fake member access is possible.
 - **Discord presence:** Home keeps the Discord widget embed. Team shows a live member list fetched from Discord's public widget API, without the embed.
 - **Nav CTA:** A **Join Vayu Empire Discord** button is always available in the header nav and mobile menu.
@@ -100,7 +100,9 @@ All internal links use extensionless paths such as `/team`, `/commands` and `/lo
 
 ## Content editing
 
-In Admin → **Site content**, select any section (`home`, `about`, `site_settings`, `team`, `commands`, `faq`, …), edit the JSON, and save. `site_settings` holds the admin Discord ID, owner email, social links and widget/channel IDs. The site loads the new data immediately. Defaults live in `js/data.js` and are used as the fallback when Supabase has no row for a section.
+In Admin → **Site content**, pick a section chip (Home, About, Team, Tutorials, Command guide, Command library, Quick links, Files & downloads, FAQ, Site settings) and edit it with normal form fields. Lists (team members, commands, guide commands, FAQ questions, file details, features, steps…) have **Add / move up / move down / remove** controls, so nothing needs hand-written JSON. Image fields show a live thumbnail. Unsaved changes are flagged, and saving publishes instantly.
+
+`site_settings` holds the admin Discord ID, owner email, social links and widget/channel IDs. Defaults live in `js/data.js` and are used as the fallback when Supabase has no row for a section. **Advanced JSON** keeps the old raw editor for edge cases.
 
 ## Files
 

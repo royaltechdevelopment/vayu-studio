@@ -31,7 +31,9 @@ Everything else lives in Supabase:
 | **Auth → Providers → Discord** | Discord Client ID/Secret + scopes `identify email` (server side). |
 | **`site_content` → `site_settings`** | `ADMIN_DISCORD_ID` (your Discord user ID → owner), `DEFAULT_ADMIN_EMAIL` (fallback owner), `YOUTUBE_CHANNEL_ID`, `DISCORD_WIDGET_ID`, `DISCORD_CHAT_CHANNEL_ID`, `SOCIAL` links. |
 
-`site_settings` is seeded by `supabase/schema.sql` and can be edited any time in **Admin → Site content → `site_settings`**. `js/data.js` keeps the same values as local defaults for unconfigured/local mode. No redeploy needed when you change them.
+`site_settings` is seeded by `supabase/schema.sql` and can be edited any time in **Admin → Site content → Site settings**. `js/data.js` keeps the same values as local defaults for unconfigured/local mode. No redeploy needed when you change them.
+
+The same **Site content** tab edits every page with forms: Home, About, Team, Tutorials, Command guide, Command library, Quick links, Files & downloads, FAQ and Site settings. Lists support add / reorder / remove, and a raw **Advanced JSON** tab remains for edge cases.
 
 The Discord **Client Secret** must stay in Supabase (never in the repo or `config.js`) because it is server-side.
 
