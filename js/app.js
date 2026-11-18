@@ -22,6 +22,13 @@
     return (name.includes('.') ? name.replace(/\.html$/, '') : name) || 'index';
   };
 
+  // An admin save refreshes other open content tabs automatically.
+  window.addEventListener('storage', (e) => {
+    if (e.key !== 'vayu_content_update') return;
+    if (['admin', 'login', 'register'].includes(App.pageKey())) return;
+    location.reload();
+  });
+
   App.toast = function (message, type = 'ok') {
     let el = document.getElementById('toast');
     if (!el) {
@@ -89,6 +96,7 @@
       updated_by: user?.id || null
     });
     if (error) throw error;
+    try { localStorage.setItem('vayu_content_update', String(Date.now())); } catch {}
   };
 
   App.mount = function (html) {

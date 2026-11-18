@@ -19,7 +19,11 @@
 
   window.sb = window.DB_READY
     ? window.supabase.createClient(url, key, {
-        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+        // Always read fresh content after an admin save.
+        global: {
+          fetch: (input, init = {}) => fetch(input, { ...init, cache: 'no-store' })
+        }
       })
     : null;
 
