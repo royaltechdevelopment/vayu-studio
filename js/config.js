@@ -8,7 +8,7 @@
    Supabase → Authentication → Providers → Discord (server side).
    ============================================================ */
 window.APP_CONFIG = {
-  SITE_NAME: 'Vayu Playz',
+  SITE_NAME: 'Vayu Pyz',
 
   // 👇 Paste your Supabase project credentials here
   SUPABASE_URL: 'https://YOUR_PROJECT_ID.supabase.co',
