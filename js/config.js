@@ -11,6 +11,6 @@
    ============================================================ */
 window.APP_CONFIG = {
   // 👇 Paste your Supabase project credentials here (required).
-  SUPABASE_URL: 'https://YOUR_PROJECT_ID.supabase.co',
-  SUPABASE_ANON_KEY: 'YOUR_SUPABASE_ANON_KEY'
+  SUPABASE_URL: 'https://kedaiqlgkicpsuibvkqo.supabase.co',
+  SUPABASE_ANON_KEY: 'sb_publishable_UpR4mVEo3LtDwZQthZz9xw_s4H1qs-g'
 };
