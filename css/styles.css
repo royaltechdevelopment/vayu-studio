@@ -400,6 +400,29 @@ code, pre { font-family: var(--mono); }
 .acc-item.open .acc-a { display: block; animation: rise .25s ease forwards; }
 
 /* ---------- Guide / videos / files ---------- */
+.guide-tabs {
+  display: flex; gap: 8px; margin-bottom: 18px;
+  overflow-x: auto; padding-bottom: 5px;
+  scrollbar-width: thin;
+}
+.guide-tab {
+  display: inline-flex; align-items: center; gap: 9px;
+  flex: 0 0 auto; padding: 11px 17px;
+  border: 1px solid var(--border); border-radius: 10px;
+  background: var(--surface); color: var(--muted);
+  font-family: var(--display); font-size: 13px; font-weight: 600;
+  white-space: nowrap;
+  transition: color .18s, background .18s, border-color .18s, transform .18s;
+}
+.guide-tab:hover { color: var(--text); border-color: #3a4356; }
+.guide-tab.active {
+  background: var(--lime); color: #0a0b0f; border-color: var(--lime);
+  box-shadow: 0 8px 24px rgba(182,255,60,.16);
+}
+.guide-tab-num { font-family: var(--mono); font-size: 10px; opacity: .65; }
+.guide-panel { display: none; }
+.guide-panel.active { display: block; animation: rise .25s ease forwards; }
+.guide-panel:focus { outline: none; }
 .guide-block { margin-bottom: 26px; }
 .guide-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
 .guide-head .num { font-family: var(--mono); color: var(--lime); font-size: 12px; }

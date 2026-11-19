@@ -121,7 +121,7 @@
     },
     {
       key: 'guide', label: 'Command guide', icon: 'fa-list-check', page: 'tutorial-guide',
-      desc: 'Step-by-step command guide. Sections contain command rows.',
+      desc: 'Step-by-step command guide. Each section becomes its own tab on the guide page, with command rows inside.',
       fields: [
         { k: 'kicker', label: 'Kicker / label' },
         { k: 'title', label: 'Title' },

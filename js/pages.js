@@ -298,17 +298,64 @@
   /* ---------------- GUIDE ---------------- */
   async function guide() {
     const d = await App.loadContent('guide');
-    App.mount(App.shell(d.kicker, d.title, d.subtitle,
-      d.sections.map((sec, i) => `
-        <div class="panel guide-block reveal">
-          <div class="guide-head"><span class="num">0${i + 1}</span><h3>${App.h(sec.title)}</h3><span class="muted small">— ${App.h(sec.desc)}</span></div>
-          ${sec.items.map((it) => `
-            <div class="guide-item">
-              <div><div class="mono" style="color:var(--cyan);font-size:12px">${App.h(it.cmd)}</div><div class="dim small">${App.h(it.desc)}</div></div>
-              <button class="copy-mini" type="button" data-copy="${App.h(it.cmd)}"><i class="fa-regular fa-copy"></i></button>
-            </div>`).join('')}
-        </div>`).join('')
-    ));
+    const sections = Array.isArray(d.sections) ? d.sections : [];
+
+    App.mount(App.shell(d.kicker, d.title, d.subtitle, `
+      ${sections.length ? `
+        <div class="guide-tabs" role="tablist" aria-label="Command guide sections">
+          ${sections.map((sec, i) => `
+            <button class="guide-tab ${i === 0 ? 'active' : ''}" type="button"
+              role="tab" id="guide-tab-${i}" aria-controls="guide-panel-${i}"
+              aria-selected="${i === 0}" tabindex="${i === 0 ? '0' : '-1'}"
+              data-guide-tab="${i}">
+              <span class="guide-tab-num">${String(i + 1).padStart(2, '0')}</span><span>${App.h(sec.title)}</span>
+            </button>`).join('')}
+        </div>
+        ${sections.map((sec, i) => `
+          <div class="guide-panel ${i === 0 ? 'active' : ''}" role="tabpanel"
+            id="guide-panel-${i}" aria-labelledby="guide-tab-${i}"
+            data-guide-panel="${i}" ${i === 0 ? '' : 'hidden'}>
+            <div class="panel guide-block">
+              <div class="guide-head"><span class="num">${String(i + 1).padStart(2, '0')}</span><h3>${App.h(sec.title)}</h3><span class="muted small">— ${App.h(sec.desc)}</span></div>
+              ${(sec.items || []).map((it) => `
+                <div class="guide-item">
+                  <div><div class="mono" style="color:var(--cyan);font-size:12px">${App.h(it.cmd)}</div><div class="dim small">${App.h(it.desc)}</div></div>
+                  <button class="copy-mini" type="button" data-copy="${App.h(it.cmd)}"><i class="fa-regular fa-copy"></i></button>
+                </div>`).join('')}
+            </div>
+          </div>`).join('')}
+      ` : '<div class="panel empty-state"><i class="fa-solid fa-list-check"></i><h3>No guide sections yet</h3><p>Add sections in Admin → Site content → Command guide.</p></div>'}
+    `));
+
+    const tabs = App.qsa('[data-guide-tab]');
+    const panels = App.qsa('[data-guide-panel]');
+
+    function selectGuideTab(index) {
+      tabs.forEach((tab, i) => {
+        const on = i === index;
+        tab.classList.toggle('active', on);
+        tab.setAttribute('aria-selected', String(on));
+        tab.tabIndex = on ? 0 : -1;
+        panels[i].classList.toggle('active', on);
+        panels[i].hidden = !on;
+      });
+    }
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => selectGuideTab(i));
+      tab.addEventListener('keydown', (e) => {
+        let next = null;
+        if (e.key === 'ArrowRight') next = (i + 1) % tabs.length;
+        else if (e.key === 'ArrowLeft') next = (i - 1 + tabs.length) % tabs.length;
+        else if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = tabs.length - 1;
+        if (next === null) return;
+        e.preventDefault();
+        selectGuideTab(next);
+        tabs[next].focus();
+      });
+    });
+    if (tabs.length) selectGuideTab(0);
   }
 
   /* ---------------- COMMANDS ---------------- */
