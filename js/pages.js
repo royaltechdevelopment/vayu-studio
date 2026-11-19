@@ -762,6 +762,10 @@
     const user = await Auth.user();
     const discordLinked = await Auth.hasDiscordIdentity();
     const provider = user?.app_metadata?.provider || (discordLinked ? 'discord' : 'email');
+    const discordOnly = provider === 'discord';
+    const shownEmail = discordOnly && profile.email
+      ? String(profile.email).replace(/^([^@]{1,2})[^@]*@/, '$1***@')
+      : (profile.email || '');
     const initial = (profile.full_name || profile.email || 'U').trim().charAt(0).toUpperCase();
 
     App.mount(App.shell('12 / ACCOUNT', 'Your account', 'Manage your profile, identity and session.', `
@@ -771,10 +775,10 @@
             ${profile.avatar_url ? `<img src="${App.h(profile.avatar_url)}" alt="">` : App.h(initial)}
           </div>
           <h3 style="font-family:var(--display);margin:14px 0 2px">${App.h(profile.full_name || 'Member')}</h3>
-          <p class="muted small" style="margin:0">${App.h(profile.email || '')}</p>
+          <p class="muted small" style="margin:0" title="${discordOnly ? 'Discord account — email hidden' : App.h(profile.email || '')}">${App.h(shownEmail)}</p>
           <div class="row" style="gap:8px;margin-top:14px">
             ${tag(profile.role || 'user', ['admin', 'owner'].includes(profile.role) ? 'lime' : '')}
-            ${tag(provider.toUpperCase())}
+            ${tag(discordOnly ? 'DISCORD ACCOUNT' : provider.toUpperCase())}
           </div>
           <div class="divider"></div>
           <div class="account-details">
@@ -813,13 +817,14 @@
               : `<button class="btn btn-discord sm" type="button" id="accLinkDiscord"><i class="fa-brands fa-discord"></i> Connect</button>`}
           </div>
           <div class="identity-row">
-            <div><b>Password</b><div class="dim small">Add or change the password for email login.</div></div>
-            ${tag(provider.toUpperCase())}
+            <div><b>Password</b><div class="dim small">${discordOnly ? 'Discord accounts sign in with Discord only — password login stays disabled.' : 'Add or change the password for email login.'}</div></div>
+            ${tag(discordOnly ? 'DISCORD ONLY' : provider.toUpperCase())}
           </div>
+          ${discordOnly ? '' : `
           <form id="accountPassForm" class="stack account-pass">
             <div class="field"><label>New password</label><input id="accPass" type="password" minlength="6" required autocomplete="new-password" placeholder="At least 6 characters"></div>
             <button class="btn btn-ghost" type="submit"><i class="fa-solid fa-key"></i> Update password</button>
-          </form>
+          </form>`}
           <div class="divider"></div>
           <button class="btn btn-logout" type="button" id="accLogout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
         </div>

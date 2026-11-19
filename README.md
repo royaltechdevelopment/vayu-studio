@@ -93,7 +93,7 @@ Without logging in, only **Home, Team, Tutorials, About and Contact** are visibl
 
 - In real mode, opening a gated page redirects to `login?redirect=...`; after login you return to that page.
 - If Supabase is not configured, gated pages show a **Setup required** screen instead of any member UI.
-- **Account** (members only) shows your profile, role, Discord link status and password settings. The user chip in the header links to it. Profile edits go through the `update_own_profile` RPC, so your role can never be changed from the browser.
+- **Account** (members only) shows your profile, role, Discord link status and password settings. The user chip in the header links to it. Profile edits go through the `update_own_profile` RPC, so your role can never be changed from the browser. Discord-only accounts have their email masked and cannot set a password (no email/password login with their Discord email).
 - The logged-out nav shows 5 public links; after login the first link becomes **Dashboard** (`commands`) and the 5 member links are added.
 
 ## Clean URLs

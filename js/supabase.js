@@ -152,6 +152,13 @@
 
     async updatePassword(password) {
       if (!window.sb) throw new Error('Supabase is not configured.');
+      const user = await this.user();
+      if (!user) throw new Error('You are not signed in.');
+      // Discord-created accounts stay Discord-only. Setting a password would
+      // silently enable email/password login with their Discord email.
+      if (user.app_metadata?.provider === 'discord') {
+        throw new Error('This account signs in with Discord only.');
+      }
       const { error } = await window.sb.auth.updateUser({ password });
       if (error) throw error;
       return true;
