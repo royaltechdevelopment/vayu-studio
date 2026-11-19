@@ -136,6 +136,27 @@
       return profile;
     },
 
+    // Edit only your own display fields through a SECURITY DEFINER RPC,
+    // so the `role` column can never be changed from the browser.
+    async updateProfile(fullName, avatarUrl) {
+      if (!window.sb) throw new Error('Supabase is not configured.');
+      const user = await this.user();
+      if (!user) throw new Error('You are not signed in.');
+      const { error } = await window.sb.rpc('update_own_profile', {
+        p_full_name: String(fullName || '').trim(),
+        p_avatar_url: String(avatarUrl || '').trim()
+      });
+      if (error) throw error;
+      return true;
+    },
+
+    async updatePassword(password) {
+      if (!window.sb) throw new Error('Supabase is not configured.');
+      const { error } = await window.sb.auth.updateUser({ password });
+      if (error) throw error;
+      return true;
+    },
+
     isAdmin(profile) {
       return Boolean(profile && ['admin', 'owner'].includes(profile.role));
     },

@@ -18,7 +18,8 @@
     { href: 'tutorial-guide', label: 'Command Guide', icon: 'fa-book' },
     { href: 'links', label: 'Links', icon: 'fa-link' },
     { href: 'files', label: 'Files', icon: 'fa-folder' },
-    { href: 'faq', label: 'FAQ', icon: 'fa-circle-question' }
+    { href: 'faq', label: 'FAQ', icon: 'fa-circle-question' },
+    { href: 'account', label: 'Account', icon: 'fa-user-gear' }
   ];
 
   const current = App.pageKey();
@@ -174,10 +175,10 @@
     const initial = (profile?.full_name || profile?.email || 'U').trim().charAt(0).toUpperCase();
     topSlot.innerHTML = `
       <span class="config-dot" title="${configured ? 'Supabase connected' : 'Setup required — configure js/config.js'}"></span>
-      ${profile ? `<div class="user-chip" title="${App.h(profile.email)}">
+      ${profile ? `<a class="user-chip" href="account" title="${App.h(profile.email)} — open account">
         <span class="avatar-sm">${App.h(initial)}</span>
         <span class="user-meta"><b>${App.h(profile.full_name || 'Member')}</b><small>${App.h(profile.role)}</small></span>
-      </div>
+      </a>
       <button class="icon-btn" type="button" data-logout title="Logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>` : ''}`;
 
     if (navSlot) navSlot.innerHTML = `<div class="auth-buttons">${discordCta()}${authButtons(profile)}</div>`;

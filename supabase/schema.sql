@@ -127,6 +127,29 @@ $$;
 revoke all on function public.set_user_role(uuid, text) from public;
 grant execute on function public.set_user_role(uuid, text) to authenticated;
 
+-- ---------- Own profile editing (Account page) ----------
+-- Users may only change their display name and avatar. `role` is untouched,
+-- so this cannot be used to self-promote. RLS still blocks direct updates.
+create or replace function public.update_own_profile(p_full_name text, p_avatar_url text)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  update public.profiles
+     set full_name = case
+                       when p_full_name is null or btrim(p_full_name) = '' then full_name
+                       else btrim(p_full_name)
+                     end,
+         avatar_url = nullif(btrim(coalesce(p_avatar_url, '')), '')
+   where id = auth.uid();
+end;
+$$;
+
+revoke all on function public.update_own_profile(text, text) from public;
+grant execute on function public.update_own_profile(text, text) to authenticated;
+
 -- ---------- Admin access by Discord ID ----------
 -- Set ADMIN_DISCORD_ID in Admin → Site content → site_settings (or in the
 -- seed row above). It is sent by the client but verified against this user's

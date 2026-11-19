@@ -6,7 +6,7 @@ Same content as the old `vayu-web` repo, rebuilt with a **new visual style**. St
 
 ## What's included
 
-- **Pages:** Home, About, Team, Tutorials, Command Guide, Commands, Links, Files, FAQ, Contact, Login, Register, Admin.
+- **Pages:** Home, About, Team, Tutorials, Command Guide, Commands, Links, Files, FAQ, Contact, Login, Register, Account, Admin.
 - **Design:** Obsidian background with acid-lime/violet accents, Space Grotesk headings, dot-grid layout, fully responsive. This replaces the old cyan-glass/video-background style.
 - **Auth:** Email/password + **Discord login** through Supabase Auth.
 - **Roles:** `user`, `admin`, `owner`. New signups start as `user`. Put your Discord user ID in **Admin → Site content → `site_settings` → `ADMIN_DISCORD_ID`** (Supabase) and that account becomes `owner` on login.
@@ -34,6 +34,7 @@ A copy-paste, deployed version of this guide — with the full Discord OAuth ste
 
 1. Create a project at [supabase.com](https://supabase.com).
 2. In **SQL Editor → New query**, paste the full contents of `supabase/schema.sql` and run it.
+   > Re-run this file after pulling repo updates — it uses `create or replace`, so existing data and admin edits are kept. Newer builds need the `update_own_profile` RPC used by the Account page.
 3. In Project Settings → API, copy the **Project URL** and **anon public key**.
 4. Add them to `js/config.js`:
 
@@ -92,6 +93,7 @@ Without logging in, only **Home, Team, Tutorials, About and Contact** are visibl
 
 - In real mode, opening a gated page redirects to `login?redirect=...`; after login you return to that page.
 - If Supabase is not configured, gated pages show a **Setup required** screen instead of any member UI.
+- **Account** (members only) shows your profile, role, Discord link status and password settings. The user chip in the header links to it. Profile edits go through the `update_own_profile` RPC, so your role can never be changed from the browser.
 - The logged-out nav shows 5 public links; after login the first link becomes **Dashboard** (`commands`) and the 5 member links are added.
 
 ## Clean URLs

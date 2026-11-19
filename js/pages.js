@@ -756,9 +756,126 @@
     });
   }
 
+  /* ---------------- ACCOUNT ---------------- */
+  async function account() {
+    const profile = (await Auth.profile()) || {};
+    const user = await Auth.user();
+    const discordLinked = await Auth.hasDiscordIdentity();
+    const provider = user?.app_metadata?.provider || (discordLinked ? 'discord' : 'email');
+    const initial = (profile.full_name || profile.email || 'U').trim().charAt(0).toUpperCase();
+
+    App.mount(App.shell('12 / ACCOUNT', 'Your account', 'Manage your profile, identity and session.', `
+      <div class="grid g2 account-grid">
+        <div class="panel account-profile reveal">
+          <div class="account-avatar">
+            ${profile.avatar_url ? `<img src="${App.h(profile.avatar_url)}" alt="">` : App.h(initial)}
+          </div>
+          <h3 style="font-family:var(--display);margin:14px 0 2px">${App.h(profile.full_name || 'Member')}</h3>
+          <p class="muted small" style="margin:0">${App.h(profile.email || '')}</p>
+          <div class="row" style="gap:8px;margin-top:14px">
+            ${tag(profile.role || 'user', ['admin', 'owner'].includes(profile.role) ? 'lime' : '')}
+            ${tag(provider.toUpperCase())}
+          </div>
+          <div class="divider"></div>
+          <div class="account-details">
+            <div><span class="dim small">Member since</span><b>${App.h(App.date(profile.created_at))}</b></div>
+            <div>
+              <span class="dim small">User ID</span>
+              <div class="row" style="gap:8px">
+                <code class="mono small account-id">${App.h(profile.id || '')}</code>
+                <button class="copy-mini" type="button" data-copy="${App.h(profile.id || '')}"><i class="fa-regular fa-copy"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel reveal">
+          <div class="account-section-head">
+            <h3 style="font-family:var(--display);margin:0;font-size:18px">Edit profile</h3>
+            <span class="muted small">Shown across the site.</span>
+          </div>
+          <form id="accountProfileForm" class="stack">
+            <div class="field"><label>Full name</label><input id="accName" type="text" required maxlength="80" value="${App.h(profile.full_name || '')}"></div>
+            <div class="field"><label>Avatar URL</label><input id="accAvatar" type="url" placeholder="https://example.com/avatar.png" value="${App.h(profile.avatar_url || '')}"></div>
+            <button class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Save profile</button>
+          </form>
+        </div>
+
+        <div class="panel reveal">
+          <div class="account-section-head">
+            <h3 style="font-family:var(--display);margin:0;font-size:18px">Identity &amp; security</h3>
+            <span class="muted small">Keep your account connected.</span>
+          </div>
+          <div class="identity-row">
+            <div><b>Discord</b><div class="dim small">${discordLinked ? 'Your Discord account is linked.' : 'Link Discord to unlock the full workspace.'}</div></div>
+            ${discordLinked
+              ? tag('LINKED', 'lime')
+              : `<button class="btn btn-discord sm" type="button" id="accLinkDiscord"><i class="fa-brands fa-discord"></i> Connect</button>`}
+          </div>
+          <div class="identity-row">
+            <div><b>Password</b><div class="dim small">Add or change the password for email login.</div></div>
+            ${tag(provider.toUpperCase())}
+          </div>
+          <form id="accountPassForm" class="stack account-pass">
+            <div class="field"><label>New password</label><input id="accPass" type="password" minlength="6" required autocomplete="new-password" placeholder="At least 6 characters"></div>
+            <button class="btn btn-ghost" type="submit"><i class="fa-solid fa-key"></i> Update password</button>
+          </form>
+          <div class="divider"></div>
+          <button class="btn btn-logout" type="button" id="accLogout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+        </div>
+      </div>
+    `));
+
+    const $ = (id) => document.getElementById(id);
+
+    $('accountProfileForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('[type=submit]');
+      const name = $('accName').value.trim();
+      const avatar = $('accAvatar').value.trim();
+      btn.disabled = true;
+      try {
+        await Auth.updateProfile(name, avatar);
+        App.toast('Profile saved');
+        const heading = App.qs('.account-profile h3');
+        if (heading) heading.textContent = name || 'Member';
+        window.Layout?.renderAuth?.();
+      } catch (err) {
+        App.toast(err.message || String(err), 'err');
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    $('accountPassForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const pass = $('accPass').value;
+      if (pass.length < 6) return App.toast('Password must be at least 6 characters', 'err');
+      const btn = e.target.querySelector('[type=submit]');
+      btn.disabled = true;
+      try {
+        await Auth.updatePassword(pass);
+        e.target.reset();
+        App.toast('Password updated');
+      } catch (err) {
+        App.toast(err.message || String(err), 'err');
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    $('accLinkDiscord')?.addEventListener('click', async () => {
+      try {
+        await Auth.linkDiscord(location.origin + location.pathname);
+      } catch (err) { App.toast(err.message || String(err), 'err'); }
+    });
+
+    $('accLogout')?.addEventListener('click', () => Auth.signOut());
+  }
+
   const pages = {
     home, about, team, tutorials, guide, commands, links,
-    files, faq, contact, login, register
+    files, faq, contact, login, register, account
   };
 
   // Only these pages are public. Everything else is members-only.
