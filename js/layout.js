@@ -161,7 +161,7 @@
     const profile = await Auth.profile();
     const links = [homeItem(profile), ...PUBLIC.slice(1), ...(profile ? MEMBERS : [])];
 
-    // Dashboard and Commands share commands.html; highlight only the first match.
+    // Keep only the first match active if any nav items ever share an href.
     const markedHrefs = new Set();
     const marked = links.map((i) => {
       const active = i.href === current && !markedHrefs.has(i.href);
@@ -189,6 +189,20 @@
     });
 
     await renderDiscordGate(profile);
+    return profile;
+  }
+
+  // A signed-in member who reopens the site (no same-site referrer) lands on
+  // the Dashboard instead of Home/Login. Internal links like the brand logo
+  // still open Home normally, because they arrive with our own origin as
+  // referrer. replace() keeps Back from bouncing to the old landing page.
+  function landOnDashboard(profile) {
+    if (!profile || !window.DB_READY) return;
+    if (!['index', 'login', 'register'].includes(App.pageKey())) return;
+    let internal = false;
+    try { internal = Boolean(document.referrer && new URL(document.referrer).origin === location.origin); } catch {}
+    if (internal) return;
+    location.replace('dashboard');
   }
 
   function initNav() {
@@ -218,7 +232,8 @@
     if (year) year.textContent = new Date().getFullYear();
 
     initNav();
-    await renderAuth();
+    const profile = await renderAuth();
+    landOnDashboard(profile);
     Auth.onAuthChange(renderAuth);
   });
 

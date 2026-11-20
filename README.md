@@ -95,6 +95,7 @@ Without logging in, only **Home, Team, Tutorials, About and Contact** are visibl
 - If Supabase is not configured, gated pages show a **Setup required** screen instead of any member UI.
 - **Account** (members only) shows your profile, role, Discord link status and password settings. The user chip in the header links to it. Profile edits go through the `update_own_profile` RPC, so your role can never be changed from the browser. Discord-only accounts have their email masked and cannot set a password (no email/password login with their Discord email).
 - The logged-out nav shows 5 public links; after login the first link becomes **Dashboard** (`dashboard`) and the 6 member links are added. Login sends members to the Dashboard by default.
+- Supabase keeps the session after the browser/tab is closed. Reopening the site root (or `/login`) while still signed in redirects straight to the Dashboard; internal links such as the brand logo still open Home normally.
 - **Dashboard** is a members-only landing page with your profile, live content counts and quick-access cards. It is not the same page as the Command Library (`commands`).
 
 ## Clean URLs
