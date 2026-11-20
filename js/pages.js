@@ -13,9 +13,13 @@
   };
 
   const param = (name) => new URLSearchParams(location.search).get(name);
+  const ROUTES = [
+    'index', 'dashboard', 'about', 'team', 'tutorials', 'contact',
+    'commands', 'tutorial-guide', 'links', 'files', 'faq', 'account', 'admin'
+  ];
   const safeRedirect = () => {
-    const r = param('redirect');
-    return r && !r.startsWith('http') ? r : 'index';
+    const r = String(param('redirect') || '').replace(/^\/+/, '');
+    return ROUTES.includes(r) ? r : 'dashboard';
   };
 
   // Live Discord members (widget JSON) — used on Team as a member list,
@@ -162,6 +166,82 @@
         </div>
       </div>
     `);
+  }
+
+  /* ---------------- DASHBOARD ---------------- */
+  async function dashboard() {
+    const d = await App.loadContent('dashboard') || {};
+    const profile = (await Auth.profile()) || {};
+    const [commands, guide, files, faq, links, tutorials, team] = await Promise.all(
+      ['commands', 'guide', 'files', 'faq', 'links', 'tutorials', 'team']
+        .map((key) => App.loadContent(key))
+    );
+
+    const counts = {
+      commands: Array.isArray(commands) ? commands.length : 0,
+      guide: Array.isArray(guide?.sections) ? guide.sections.length : 0,
+      files: Array.isArray(files?.items) ? files.items.length : 0,
+      faq: Array.isArray(faq?.groups)
+        ? faq.groups.reduce((n, g) => n + (Array.isArray(g.items) ? g.items.length : 0), 0)
+        : 0,
+      links: Array.isArray(links?.items) ? links.items.length : 0,
+      tutorials: Array.isArray(tutorials?.videos) ? tutorials.videos.length : 0,
+      team: Array.isArray(team?.members) ? team.members.length : 0
+    };
+
+    const stats = Array.isArray(d.stats) ? d.stats : [];
+    const cards = Array.isArray(d.cards) ? d.cards : [];
+    const discordLinked = await Auth.hasDiscordIdentity();
+    const initial = (profile.full_name || profile.email || 'U').trim().charAt(0).toUpperCase();
+
+    App.mount(App.shell(d.kicker || '00 / DASHBOARD', d.title || 'Welcome back.', d.subtitle || '', `
+      <div class="panel reveal" style="margin-bottom:20px">
+        <div class="spread">
+          <div class="row">
+            <span class="avatar-sm">${App.h(initial)}</span>
+            <div>
+              <h3 style="font-family:var(--display);margin:0">${App.h(profile.full_name || 'Member')}</h3>
+              <div class="muted small">${App.h(profile.email || '')} · ${App.h(profile.role || 'user')}</div>
+            </div>
+          </div>
+          <div class="row">
+            ${tag(discordLinked ? 'DISCORD LINKED' : 'DISCORD NOT LINKED', discordLinked ? 'lime' : 'red')}
+            <a class="btn btn-ghost sm" href="account"><i class="fa-solid fa-user-gear"></i> Account settings</a>
+            ${Auth.isAdmin(profile) ? '<a class="btn btn-ghost sm" href="admin"><i class="fa-solid fa-shield-halved"></i> Admin panel</a>' : ''}
+          </div>
+        </div>
+      </div>
+
+      ${stats.length ? `
+        <div class="grid g4 reveal" style="margin-bottom:26px">
+          ${stats.map((s) => {
+            const accent = ['lime', 'violet', 'red', 'pink', 'cyan'].includes(s.accent) ? s.accent : 'lime';
+            return `
+            <div class="stat">
+              ${s.icon ? `<div class="muted small" style="margin-bottom:8px"><i class="fa-solid ${App.h(s.icon)}"></i></div>` : ''}
+              <div class="stat-value" style="color:var(--${accent})">${App.h(s.value || (counts[s.key] ?? '—'))}</div>
+              <div class="stat-label">${App.h(s.label || s.key || 'Stat')}</div>
+            </div>`;
+          }).join('')}
+        </div>` : ''}
+
+      <div class="spread reveal" style="margin-bottom:14px">
+        <div>
+          <span class="section-label">QUICK ACCESS</span>
+          <h2 style="font-family:var(--display);margin:4px 0 0">Jump back in</h2>
+        </div>
+        <a class="btn btn-ghost sm" href="commands"><i class="fa-solid fa-terminal"></i> Browse all commands</a>
+      </div>
+      <div class="grid g3 reveal">
+        ${cards.map((c) => `
+          <a class="card" href="${App.h(c.href || 'index')}" ${/^https?:\/\//i.test(c.href || '') ? 'target="_blank" rel="noopener"' : ''}>
+            <div class="card-icon ${App.h(c.accent || '')}"><i class="fa-solid ${App.h(c.icon || 'fa-link')}"></i></div>
+            <h3 style="margin-top:14px">${App.h(c.name || 'Link')}</h3>
+            <p>${App.h(c.desc || '')}</p>
+            <span class="card-cta">Open <i class="fa-solid fa-arrow-right"></i></span>
+          </a>`).join('')}
+      </div>
+    `));
   }
 
   /* ---------------- ABOUT ---------------- */
@@ -879,7 +959,7 @@
   }
 
   const pages = {
-    home, about, team, tutorials, guide, commands, links,
+    home, dashboard, about, team, tutorials, guide, commands, links,
     files, faq, contact, login, register, account
   };
 

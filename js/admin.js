@@ -27,10 +27,48 @@
     { value: 'ADVANCED', label: 'Advanced' }
   ];
 
+  const LIVE_COUNTS = [
+    { value: 'commands', label: 'Commands' },
+    { value: 'guide', label: 'Guide sections' },
+    { value: 'files', label: 'Download items' },
+    { value: 'faq', label: 'FAQ answers' },
+    { value: 'links', label: 'Quick links' },
+    { value: 'tutorials', label: 'Fallback tutorials' },
+    { value: 'team', label: 'Team members' },
+    { value: '', label: 'Manual value' }
+  ];
+
   /* ---------------- CMS schema ----------------
      type: text | area | code | bool | select | image | group | strings | list
      A list contains `fields` (repeatable cards). `itemLabel` titles each card. */
   const SECTIONS = [
+    {
+      key: 'dashboard', label: 'Dashboard', icon: 'fa-gauge-high', page: 'dashboard',
+      desc: 'Welcome text, stat cards and quick-access cards on the member dashboard.',
+      fields: [
+        { k: 'kicker', label: 'Kicker / label' },
+        { k: 'title', label: 'Welcome headline' },
+        { k: 'subtitle', label: 'Subtitle', type: 'area' },
+        {
+          k: 'stats', label: 'Stat cards', type: 'list', itemLabel: (i) => i.label || 'Stat', fields: [
+            { k: 'label', label: 'Label' },
+            { k: 'value', label: 'Fixed value', hint: 'Leave blank to show the live count below.' },
+            { k: 'key', label: 'Live count', type: 'select', options: LIVE_COUNTS },
+            { k: 'icon', label: 'Icon class', hint: 'e.g. fa-solid fa-terminal' },
+            { k: 'accent', label: 'Accent', type: 'select', options: ACCENTS }
+          ]
+        },
+        {
+          k: 'cards', label: 'Quick-access cards', type: 'list', itemLabel: (i) => i.name || 'Card', fields: [
+            { k: 'name', label: 'Title' },
+            { k: 'desc', label: 'Description' },
+            { k: 'href', label: 'Page or URL', hint: 'e.g. commands or https://…' },
+            { k: 'icon', label: 'Icon class' },
+            { k: 'accent', label: 'Accent', type: 'select', options: ACCENTS }
+          ]
+        }
+      ]
+    },
     {
       key: 'home', label: 'Home', icon: 'fa-house', page: 'index',
       desc: 'Hero headline, installer command and the live status numbers.',

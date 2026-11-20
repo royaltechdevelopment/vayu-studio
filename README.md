@@ -6,7 +6,7 @@ Same content as the old `vayu-web` repo, rebuilt with a **new visual style**. St
 
 ## What's included
 
-- **Pages:** Home, About, Team, Tutorials, Command Guide, Commands, Links, Files, FAQ, Contact, Login, Register, Account, Admin.
+- **Pages:** Home, Dashboard, About, Team, Tutorials, Command Guide, Commands, Links, Files, FAQ, Contact, Login, Register, Account, Admin.
 - **Design:** Obsidian background with acid-lime/violet accents, Space Grotesk headings, dot-grid layout, fully responsive. This replaces the old cyan-glass/video-background style.
 - **Auth:** Email/password + **Discord login** through Supabase Auth.
 - **Roles:** `user`, `admin`, `owner`. New signups start as `user`. Put your Discord user ID in **Admin → Site content → `site_settings` → `ADMIN_DISCORD_ID`** (Supabase) and that account becomes `owner` on login.
@@ -89,12 +89,13 @@ If linking fails because the Discord email does not match the account email, ena
 
 ## Page access
 
-Without logging in, only **Home, Team, Tutorials, About and Contact** are visible. Everything else — Commands, Command Guide, Links, Files, FAQ and Admin — unlocks after login.
+Without logging in, only **Home, Team, Tutorials, About and Contact** are visible. Everything else — Dashboard, Commands, Command Guide, Links, Files, FAQ and Admin — unlocks after login.
 
 - In real mode, opening a gated page redirects to `login?redirect=...`; after login you return to that page.
 - If Supabase is not configured, gated pages show a **Setup required** screen instead of any member UI.
 - **Account** (members only) shows your profile, role, Discord link status and password settings. The user chip in the header links to it. Profile edits go through the `update_own_profile` RPC, so your role can never be changed from the browser. Discord-only accounts have their email masked and cannot set a password (no email/password login with their Discord email).
-- The logged-out nav shows 5 public links; after login the first link becomes **Dashboard** (`commands`) and the 5 member links are added.
+- The logged-out nav shows 5 public links; after login the first link becomes **Dashboard** (`dashboard`) and the 6 member links are added. Login sends members to the Dashboard by default.
+- **Dashboard** is a members-only landing page with your profile, live content counts and quick-access cards. It is not the same page as the Command Library (`commands`).
 
 ## Clean URLs
 
@@ -102,7 +103,7 @@ All internal links use extensionless paths such as `/team`, `/commands` and `/lo
 
 ## Content editing
 
-In Admin → **Site content**, pick a section chip (Home, About, Team, Tutorials, Command guide, Command library, Quick links, Files & downloads, FAQ, Site settings) and edit it with normal form fields. Lists (team members, commands, guide commands, FAQ questions, file details, features, steps…) have **Add / move up / move down / remove** controls, so nothing needs hand-written JSON. Image fields show a live thumbnail. Unsaved changes are flagged, and saving publishes instantly.
+In Admin → **Site content**, pick a section chip (Dashboard, Home, About, Team, Tutorials, Command guide, Command library, Quick links, Files & downloads, FAQ, Site settings) and edit it with normal form fields. Lists (team members, commands, guide commands, FAQ questions, file details, features, steps…) have **Add / move up / move down / remove** controls, so nothing needs hand-written JSON. Image fields show a live thumbnail. Unsaved changes are flagged, and saving publishes instantly.
 
 `site_settings` holds the admin Discord ID, owner email, social links and widget/channel IDs. Defaults live in `js/data.js` and are used as the fallback when Supabase has no row for a section. **Advanced JSON** keeps the old raw editor for edge cases.
 
@@ -110,7 +111,7 @@ In Admin → **Site content**, pick a section chip (Home, About, Team, Tutorials
 
 ```
 vayu-studio/
-├── index.html, about.html, …        # pages
+├── index.html, dashboard.html, …    # pages
 ├── SETUP.md                          # deployed setup guide (Discord auth included)
 ├── css/styles.css                    # new design system
 ├── css/all.min.css + fonts/          # Font Awesome (from the old repo)

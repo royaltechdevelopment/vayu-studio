@@ -3,6 +3,24 @@
    these values. These are the same sections edited in the admin panel.
    ============================================================ */
 window.SITE_DATA = {
+  dashboard: {
+    kicker: '00 / DASHBOARD',
+    title: 'Welcome back to your workspace.',
+    subtitle: 'Your commands, downloads and community — one place to start.',
+    stats: [
+      { label: 'Commands', value: '', key: 'commands', icon: 'fa-terminal', accent: 'lime' },
+      { label: 'Guide sections', value: '', key: 'guide', icon: 'fa-book', accent: 'violet' },
+      { label: 'Downloads', value: '', key: 'files', icon: 'fa-download', accent: 'lime' },
+      { label: 'FAQ answers', value: '', key: 'faq', icon: 'fa-circle-question', accent: 'violet' }
+    ],
+    cards: [
+      { name: 'Command Library', desc: 'Search, filter and copy commands.', href: 'commands', icon: 'fa-terminal', accent: 'lime' },
+      { name: 'Files & downloads', desc: 'Tools and resources for the community.', href: 'files', icon: 'fa-download', accent: 'violet' },
+      { name: 'Tutorials', desc: 'Latest uploads from the Vayu channel.', href: 'tutorials', icon: 'fa-play', accent: 'red' },
+      { name: 'Command Guide', desc: 'Step-by-step walkthroughs.', href: 'tutorial-guide', icon: 'fa-book', accent: '' }
+    ]
+  },
+
   home: {
     kicker: '01 / COMMAND CENTER',
     badge: 'ALL SYSTEMS ONLINE',

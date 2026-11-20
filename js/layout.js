@@ -1,6 +1,6 @@
 /* ============================================================
    Shared header + footer injection (auth-aware)
-   Logged out: 5 public links. Logged in: Dashboard (commands.html) + 4 public + 5 member links.
+   Logged out: 5 public links. Logged in: Dashboard (dashboard.html) + 4 public + member links.
    ============================================================ */
 (function () {
   const social = () => App.settings().SOCIAL || {};
@@ -27,7 +27,7 @@
   // The first nav slot becomes the members' dashboard after login.
   function homeItem(profile) {
     return profile
-      ? { href: 'commands', label: 'Dashboard', icon: 'fa-gauge-high' }
+      ? { href: 'dashboard', label: 'Dashboard', icon: 'fa-gauge-high' }
       : PUBLIC[0];
   }
 
