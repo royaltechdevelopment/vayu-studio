@@ -201,7 +201,7 @@
     const initial = (profile.full_name || profile.email || 'U').trim().charAt(0).toUpperCase();
 
     App.mount(App.shell(d.kicker || '00 / DASHBOARD', d.title || 'Welcome back.', d.subtitle || '', `
-      <div class="panel reveal" style="margin-bottom:20px">
+      <div class="panel dash-profile reveal" style="margin-bottom:20px">
         <div class="spread">
           <div class="row">
             <span class="avatar-sm">${App.h(initial)}</span>
@@ -218,7 +218,7 @@
         </div>
       </div>
 
-      <div class="panel reveal" style="margin-bottom:20px">
+      <div class="panel dash-terminal reveal" style="margin-bottom:20px">
         <div class="spread" style="margin-bottom:14px">
           <div>
             <span class="section-label">QUICK START</span>
@@ -242,7 +242,7 @@
       </div>
 
       ${stats.length ? `
-        <div class="grid g4 reveal" style="margin-bottom:26px">
+        <div class="grid g4 dash-stats reveal" style="margin-bottom:26px">
           ${stats.map((s) => {
             const accent = ['lime', 'violet', 'red', 'pink', 'cyan'].includes(s.accent) ? s.accent : 'lime';
             return `
@@ -254,7 +254,7 @@
           }).join('')}
         </div>` : ''}
 
-      <div class="spread reveal" style="margin-bottom:14px">
+      <div class="spread dash-section-head reveal" style="margin-bottom:14px">
         <div>
           <span class="section-label">QUICK ACCESS</span>
           <h2 style="font-family:var(--display);margin:4px 0 0">Jump back in</h2>
@@ -271,7 +271,7 @@
           </a>`).join('')}
       </div>
 
-      <div class="panel reveal" style="margin-top:26px">
+      <div class="panel dash-chat reveal" style="margin-top:26px">
         <div class="spread" style="margin-bottom:14px">
           <div>
             <h3 style="font-family:var(--display);margin:0">Live Discord chat</h3>

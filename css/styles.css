@@ -911,3 +911,31 @@ body[data-page="admin"] .page { max-width: 1400px; }
   .cms-fab { left: 16px; right: 16px; bottom: 16px; justify-content: space-between; }
 }
 .cms-thumb.yt { width: 96px; height: 54px; border-radius: 7px; }
+
+/* ---------- Dashboard (member home) ---------- */
+.dash-profile .spread,
+.dash-section-head { flex-wrap: wrap; }
+.dash-terminal .terminal { margin-top: 0; transform: none; }
+.dash-terminal .terminal-body { font-size: 11px; }
+.dash-terminal .command-bar code { white-space: normal; word-break: break-all; }
+.dash-terminal .copy-mini { flex: 0 0 auto; white-space: nowrap; }
+
+@media (max-width: 720px) {
+  .dash-profile { padding: 16px; }
+  .dash-profile .spread { align-items: flex-start; }
+  .dash-profile .row { gap: 10px; }
+  .dash-stats { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+  .dash-stats .stat { padding: 14px 10px; }
+  .dash-stats .stat-value { font-size: 23px; }
+  .dash-stats .stat-label { font-size: 9px; letter-spacing: .5px; }
+  .dash-terminal .terminal-body { padding: 14px; }
+  .dash-terminal .command-bar { flex-wrap: wrap; gap: 6px; padding: 8px; }
+  .dash-terminal .command-bar code { flex: 1 1 100%; }
+  .dash-terminal .copy-mini { width: 100%; }
+  .dash-chat { padding: 16px; }
+  .dash-chat .live-chat-frame { height: 360px; }
+  .dash-chat .live-chat-meta { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 380px) {
+  .dash-stats { grid-template-columns: 1fr; }
+}
