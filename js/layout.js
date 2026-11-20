@@ -41,7 +41,7 @@
     return `
       <header class="topbar">
         <div class="topbar-top">
-          <a class="brand" href="index" aria-label="Vayu Playz home">
+          <a class="brand" id="brand-link" href="index" aria-label="Vayu Playz home">
             <span class="brand-mark">V</span>
             <span class="brand-copy"><strong>Vayu <em>Playz</em></strong><small>official ecosystem</small></span>
           </a>
@@ -159,6 +159,11 @@
 
     const configured = window.DB_READY;
     const profile = await Auth.profile();
+    const brand = document.getElementById('brand-link');
+    if (brand) {
+      brand.setAttribute('href', profile ? 'dashboard' : 'index');
+      brand.setAttribute('aria-label', profile ? 'Vayu Playz dashboard' : 'Vayu Playz home');
+    }
     const links = [homeItem(profile), ...PUBLIC.slice(1), ...(profile ? MEMBERS : [])];
 
     // Keep only the first match active if any nav items ever share an href.
@@ -192,16 +197,12 @@
     return profile;
   }
 
-  // A signed-in member who reopens the site (no same-site referrer) lands on
-  // the Dashboard instead of Home/Login. Internal links like the brand logo
-  // still open Home normally, because they arrive with our own origin as
-  // referrer. replace() keeps Back from bouncing to the old landing page.
+  // Home is never shown to a signed-in member. Any direct visit to the root,
+  // /index.html, /login or /register goes straight to the Dashboard; the brand
+  // link also points there while logged in. replace() keeps Back from bouncing.
   function landOnDashboard(profile) {
     if (!profile || !window.DB_READY) return;
     if (!['index', 'login', 'register'].includes(App.pageKey())) return;
-    let internal = false;
-    try { internal = Boolean(document.referrer && new URL(document.referrer).origin === location.origin); } catch {}
-    if (internal) return;
     location.replace('dashboard');
   }
 

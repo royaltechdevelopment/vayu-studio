@@ -109,6 +109,9 @@
 
   /* ---------------- HOME ---------------- */
   async function home() {
+    // Never render Home for a signed-in member; layout also redirects these
+    // URLs, but this guard prevents even a brief flash during page load.
+    if (await Auth.profile()) { location.replace('dashboard'); return; }
     const d = await App.loadContent('home');
 
     App.mount(`
@@ -171,6 +174,9 @@
   /* ---------------- DASHBOARD ---------------- */
   async function dashboard() {
     const d = await App.loadContent('dashboard') || {};
+    const home = await App.loadContent('home') || {};
+    const settings = App.settings();
+    const installCommand = home.command || window.SITE_DATA?.home?.command || '';
     const profile = (await Auth.profile()) || {};
     const [commands, guide, files, faq, links, tutorials, team] = await Promise.all(
       ['commands', 'guide', 'files', 'faq', 'links', 'tutorials', 'team']
@@ -212,6 +218,29 @@
         </div>
       </div>
 
+      <div class="panel reveal" style="margin-bottom:20px">
+        <div class="spread" style="margin-bottom:14px">
+          <div>
+            <span class="section-label">QUICK START</span>
+            <h3 style="font-family:var(--display);margin:4px 0 0">Your workspace terminal</h3>
+          </div>
+          ${tag('READY', 'lime')}
+        </div>
+        <div class="terminal">
+          <div class="terminal-bar"><i class="dot a"></i><i class="dot b"></i><i class="dot c"></i><span class="mono small dim" style="margin-left:8px">vayu@studio ~</span></div>
+          <div class="terminal-body">
+            <div><b>$</b> initializing vayu ecosystem...</div>
+            <div style="margin-top:6px">✓ core modules loaded</div>
+            <div>✓ community synced</div>
+            <div>✓ commands ready</div>
+            <div class="command-bar">
+              <code>${App.h(installCommand)}</code>
+              <button class="copy-mini" type="button" data-copy="${App.h(installCommand)}"><i class="fa-regular fa-copy"></i> COPY</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       ${stats.length ? `
         <div class="grid g4 reveal" style="margin-bottom:26px">
           ${stats.map((s) => {
@@ -234,12 +263,29 @@
       </div>
       <div class="grid g3 reveal">
         ${cards.map((c) => `
-          <a class="card" href="${App.h(c.href || 'index')}" ${/^https?:\/\//i.test(c.href || '') ? 'target="_blank" rel="noopener"' : ''}>
+          <a class="card" href="${App.h(c.href || 'dashboard')}" ${/^https?:\/\//i.test(c.href || '') ? 'target="_blank" rel="noopener"' : ''}>
             <div class="card-icon ${App.h(c.accent || '')}"><i class="fa-solid ${App.h(c.icon || 'fa-link')}"></i></div>
             <h3 style="margin-top:14px">${App.h(c.name || 'Link')}</h3>
             <p>${App.h(c.desc || '')}</p>
             <span class="card-cta">Open <i class="fa-solid fa-arrow-right"></i></span>
           </a>`).join('')}
+      </div>
+
+      <div class="panel reveal" style="margin-top:26px">
+        <div class="spread" style="margin-bottom:14px">
+          <div>
+            <h3 style="font-family:var(--display);margin:0">Live Discord chat</h3>
+            <p class="muted small" style="margin:3px 0 0">Real messages from Vayu Empire's public chat.</p>
+          </div>
+          ${tag('LIVE', 'lime')}
+        </div>
+        <iframe class="live-chat-frame"
+          src="https://e.widgetbot.io/channels/${encodeURIComponent(settings.DISCORD_WIDGET_ID || '')}/${encodeURIComponent(settings.DISCORD_CHAT_CHANNEL_ID || '')}?theme=dark"
+          title="Vayu Empire live Discord chat" allowtransparency="true"></iframe>
+        <div class="live-chat-meta">
+          <span><span class="status-dot online"></span> Connected to Discord in real time</span>
+          <a href="${App.h(settings.SOCIAL?.discord || '')}" target="_blank" rel="noopener">Open in Discord <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+        </div>
       </div>
     `));
   }

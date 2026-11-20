@@ -189,7 +189,7 @@
           <i class="fa-solid fa-lock"></i>
           <h3>Restricted</h3>
           <p><code>${App.h(profile.email)}</code> is a regular member account.</p>
-          <a class="btn btn-ghost" href="index">Back to home</a>
+          <a class="btn btn-ghost" href="dashboard">Back to dashboard</a>
         </div>`));
       return null;
     }
