@@ -801,7 +801,7 @@
       <div class="auth-wrap">
         <div class="auth-card panel reveal">
           <div class="auth-logo">
-            <div class="brand-mark">V</div>
+            <img class="brand-mark" src="images/royal.jpg" alt="Vayu Playz logo">
             <h1>Welcome back.</h1>
             <p>Log in to your Vayu workspace.</p>
           </div>
@@ -840,7 +840,7 @@
       <div class="auth-wrap">
         <div class="auth-card panel reveal">
           <div class="auth-logo">
-            <div class="brand-mark">V</div>
+            <img class="brand-mark" src="images/royal.jpg" alt="Vayu Playz logo">
             <h1>Join the ecosystem.</h1>
             <p>Create a free account and unlock the tools.</p>
           </div>

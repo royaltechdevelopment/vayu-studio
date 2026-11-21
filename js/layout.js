@@ -42,7 +42,7 @@
       <header class="topbar">
         <div class="topbar-top">
           <a class="brand" id="brand-link" href="index" aria-label="Vayu Playz home">
-            <span class="brand-mark">V</span>
+            <img class="brand-mark" src="images/royal.jpg" alt="Vayu Playz logo">
             <span class="brand-copy"><strong>Vayu <em>Playz</em></strong><small>official ecosystem</small></span>
           </a>
           <div class="topbar-meta" id="auth-slot"></div>
@@ -69,7 +69,7 @@
       <footer class="footer">
         <div class="footer-inner">
           <div>
-            <div class="brand compact"><span class="brand-mark">V</span><span class="brand-copy"><strong>Vayu <em>Playz</em></strong></span></div>
+            <div class="brand compact"><img class="brand-mark" src="images/royal.jpg" alt="Vayu Playz logo"><span class="brand-copy"><strong>Vayu <em>Playz</em></strong></span></div>
             <p class="muted small">Gaming · Code · Community. Built for the Vayu ecosystem.</p>
           </div>
           <div class="footer-links">
