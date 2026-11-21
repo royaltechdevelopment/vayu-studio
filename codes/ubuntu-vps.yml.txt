@@ -1,0 +1,163 @@
+name: Temporary Ubuntu VPS
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ubuntu-vps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Install SSH and Tailscale
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openssh-server curl
+          curl -fsSL https://tailscale.com/install.sh | sh
+          sudo systemctl enable --now ssh
+
+      - name: Configure Direct Root SSH Access
+        env:
+          VPS_PASSWORD: ${{ secrets.VPS_PASSWORD }}
+        run: |
+          set -e
+
+          if [ -z "$VPS_PASSWORD" ]; then
+            echo "Missing VPS_PASSWORD secret"
+            exit 1
+          fi
+
+          echo "root:$VPS_PASSWORD" | sudo chpasswd
+
+          sudo tee /etc/ssh/sshd_config.d/99-vps.conf >/dev/null <<'EOF'
+          PermitRootLogin yes
+          PasswordAuthentication yes
+          KbdInteractiveAuthentication no
+          PubkeyAuthentication yes
+          EOF
+
+          sudo sshd -t
+          sudo systemctl restart ssh
+
+          echo "Direct root SSH configured."
+
+      - name: Connect Tailscale
+        env:
+          TS_AUTHKEY: ${{ secrets.TAILSCALE_AUTH_KEY }}
+        run: |
+          set -e
+
+          if [ -z "$TS_AUTHKEY" ]; then
+            echo "Missing TAILSCALE_AUTH_KEY secret"
+            exit 1
+          fi
+
+          sudo tailscale up \
+            --auth-key="$TS_AUTHKEY" \
+            --hostname="github-ubuntu-vps" \
+            --accept-dns=false
+
+          echo "Tailscale IP:"
+          sudo tailscale ip -4
+
+      - name: Check Google Drive Configuration
+        id: drive
+        env:
+          GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GDRIVE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          if [ -n "$GOOGLE_SERVICE_ACCOUNT" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+            echo "Google Drive backup enabled."
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "Google Drive backup skipped."
+          fi
+
+      - name: Wait Until Backup Window
+        run: sleep 21000
+
+      - name: Create Backup and Upload to Drive
+        if: ${{ steps.drive.outputs.enabled == 'true' }}
+        env:
+          GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GDRIVE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          set -euo pipefail
+
+          python3 -m pip install --user --break-system-packages \
+            google-api-python-client google-auth
+
+          export SA_FILE="$RUNNER_TEMP/service-account.json"
+          export BACKUP_FILE="$RUNNER_TEMP/ubuntu-backup-$(date -u +%Y%m%dT%H%M%SZ).tar.gz"
+
+          printf '%s' "$GOOGLE_SERVICE_ACCOUNT" > "$SA_FILE"
+          chmod 600 "$SA_FILE"
+
+          sudo tar -czf "$BACKUP_FILE" \
+            --ignore-failed-read \
+            --exclude='./tmp/*' \
+            -C / var root opt tmp etc
+
+          export SA_FILE BACKUP_FILE
+
+          python3 <<'PY'
+          import os
+          from google.oauth2 import service_account
+          from googleapiclient.discovery import build
+          from googleapiclient.http import MediaFileUpload
+
+          creds = service_account.Credentials.from_service_account_file(
+              os.environ["SA_FILE"],
+              scopes=["https://www.googleapis.com/auth/drive"]
+          )
+
+          drive = build("drive", "v3", credentials=creds)
+
+          name = "Ubuntu-VPS-Backups"
+
+          result = drive.files().list(
+              q="name='Ubuntu-VPS-Backups' and mimeType='application/vnd.google-apps.folder' and trashed=false",
+              spaces="drive",
+              fields="files(id,name)"
+          ).execute()
+
+          folders = result.get("files", [])
+
+          if folders:
+              folder_id = folders[0]["id"]
+          else:
+              folder_id = drive.files().create(
+                  body={
+                      "name": name,
+                      "mimeType": "application/vnd.google-apps.folder"
+                  },
+                  fields="id"
+              ).execute()["id"]
+
+          filename = os.path.basename(os.environ["BACKUP_FILE"])
+
+          media = MediaFileUpload(
+              os.environ["BACKUP_FILE"],
+              mimetype="application/gzip",
+              resumable=True
+          )
+
+          uploaded = drive.files().create(
+              body={"name": filename, "parents": [folder_id]},
+              media_body=media,
+              fields="id,name"
+          ).execute()
+
+          print("Backup uploaded:", uploaded["name"])
+          PY
+
+          rm -f "$SA_FILE"
+
+      - name: Keep VPS Alive
+        run: |
+          echo "Temporary Ubuntu VPS is running."
+          echo "SSH Username: root"
+          echo "Use the Tailscale IP printed in the logs."
+          sleep 60
